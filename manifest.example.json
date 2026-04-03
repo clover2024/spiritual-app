@@ -1,0 +1,72 @@
+{
+  "videos": [
+    {
+      "id": "video-001",
+      "title": "属灵视频示例一",
+      "description": "这是第一个示例视频的描述",
+      "coverUrl": "/covers/video-001.jpg",
+      "videoUrl": "/videos/video-001.mp4",
+      "duration": "12:30",
+      "date": "2025-01-15"
+    },
+    {
+      "id": "video-002",
+      "title": "属灵视频示例二",
+      "description": "这是第二个示例视频的描述",
+      "coverUrl": "/covers/video-002.jpg",
+      "videoUrl": "/videos/video-002.mp4",
+      "duration": "25:00",
+      "date": "2025-02-20"
+    }
+  ],
+  "hymns": [
+    {
+      "id": "hymn-001",
+      "title": "奇妙十架",
+      "author": "以撒华兹",
+      "category": "赞美",
+      "lyrics": "当我思量奇妙十架\n荣耀之主在上悬挂\n平生所珍尽看有损\n昔日所夸今觉鄙下\n\n求主禁我别有所夸\n只夸救主舍身十架\n基督为我替身受死\n我藉基督蒙恩归家\n\n愿将所有献于十架\n爱主如此奇妙伟大\n一生响应主的爱召\n一生歌颂主恩浩大",
+      "audioUrl": "/hymns/hymn-001.mp3",
+      "date": "2025-01-20"
+    },
+    {
+      "id": "hymn-002",
+      "title": "奇异恩典",
+      "author": "约翰牛顿",
+      "category": "恩典",
+      "lyrics": "奇异恩典何等甘甜\n我来罪大蒙恩怜\n前我失丧今被寻回\n瞎眼今得看见\n\n如此恩典使我敬畏\n使我心得安慰\n初信之时即蒙恩惠\n真是何等宝贵",
+      "date": "2025-02-15"
+    },
+    {
+      "id": "hymn-003",
+      "title": "你真伟大",
+      "author": "斯图尔特·海因",
+      "category": "敬拜",
+      "lyrics": "主啊我神我每逢举目观看\n你手所造一切奇妙大工\n看见星宿又听到隆隆雷声\n你的大工充满了宇宙中\n\n我灵歌唱赞美救主我神\n你真伟大何等伟大\n我灵歌唱赞美救主我神\n你真伟大何等伟大",
+      "audioUrl": "/hymns/hymn-003.mp3",
+      "date": "2025-03-10"
+    }
+  ],
+  "books": [
+    {
+      "id": "book-001",
+      "title": "属灵书报示例一",
+      "author": "作者名",
+      "description": "这是第一本示例书报的描述",
+      "coverUrl": "/covers/book-001.jpg",
+      "fileUrl": "/books/book-001.pdf",
+      "format": "pdf",
+      "date": "2025-01-10"
+    },
+    {
+      "id": "book-002",
+      "title": "属灵书报示例二",
+      "author": "作者名",
+      "description": "这是第二本示例书报的描述",
+      "coverUrl": "/covers/book-002.jpg",
+      "fileUrl": "/books/book-002.epub",
+      "format": "epub",
+      "date": "2025-03-05"
+    }
+  ]
+}

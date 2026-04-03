@@ -17,6 +17,9 @@ $RECYCLE.BIN/
 log.txt
 npm-debug.log*
 
+# Environment variables
+.env
+
 /.idea
 /.ionic
 /.sass-cache
@@ -30,3 +33,8 @@ npm-debug.log*
 /platforms
 /plugins
 /www
+/release
+/src-tauri/target
+/android
+/electron
+daily-bible.json

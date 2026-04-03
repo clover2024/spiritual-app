@@ -1,11 +1,11 @@
-import { createRouter, createWebHistory } from '@ionic/vue-router';
+import { createRouter, createWebHashHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
-import TabsPage from '../views/TabsPage.vue'
+import TabsPage from '../views/TabsPage.vue';
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    redirect: '/tabs/tab1'
+    redirect: '/tabs/home',
   },
   {
     path: '/tabs/',
@@ -13,27 +13,55 @@ const routes: Array<RouteRecordRaw> = [
     children: [
       {
         path: '',
-        redirect: '/tabs/tab1'
+        redirect: '/tabs/home',
       },
       {
-        path: 'tab1',
-        component: () => import('@/views/Tab1Page.vue')
+        path: 'home',
+        component: () => import('@/views/HomePage.vue'),
       },
       {
-        path: 'tab2',
-        component: () => import('@/views/Tab2Page.vue')
+        path: 'videos',
+        component: () => import('@/views/VideoListPage.vue'),
       },
       {
-        path: 'tab3',
-        component: () => import('@/views/Tab3Page.vue')
-      }
-    ]
-  }
-]
+        path: 'books',
+        component: () => import('@/views/BookListPage.vue'),
+      },
+      {
+        path: 'hymns',
+        component: () => import('@/views/HymnListPage.vue'),
+      },
+      {
+        path: 'daily-bible',
+        component: () => import('@/views/DailyBiblePage.vue'),
+      },
+      {
+        path: 'support',
+        component: () => import('@/views/SupportPage.vue'),
+      },
+    ],
+  },
+  {
+    path: '/video/:id',
+    component: () => import('@/views/VideoDetailPage.vue'),
+  },
+  {
+    path: '/book/:id',
+    component: () => import('@/views/BookReaderPage.vue'),
+  },
+  {
+    path: '/hymn/:id',
+    component: () => import('@/views/HymnDetailPage.vue'),
+  },
+  {
+    path: '/daily-bible/:month/:day',
+    component: () => import('@/views/DailyBibleDetailPage.vue'),
+  },
+];
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes
-})
+  history: createWebHashHistory(),
+  routes,
+});
 
-export default router
+export default router;

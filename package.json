@@ -1,17 +1,19 @@
 {
   "name": "spiritual-app",
   "private": true,
-  "version": "0.0.1",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "tauri dev",
     "build": "vue-tsc && vite build",
     "preview": "vite preview",
     "test:e2e": "cypress run",
     "test:unit": "vitest",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "tauri:build": "tauri build"
   },
   "dependencies": {
+    "@capacitor/android": "^8.3.0",
     "@capacitor/app": "8.1.0",
     "@capacitor/core": "8.3.0",
     "@capacitor/haptics": "8.0.2",
@@ -19,12 +21,19 @@
     "@capacitor/status-bar": "8.0.2",
     "@ionic/vue": "^8.0.0",
     "@ionic/vue-router": "^8.0.0",
+    "@tauri-apps/api": "^2.10.1",
+    "cos-js-sdk-v5": "^1.10.1",
+    "cos-nodejs-sdk-v5": "^2.15.4",
+    "epubjs": "^0.3.93",
     "ionicons": "^7.0.0",
+    "marked": "^17.0.5",
+    "pdfjs-dist": "^5.6.205",
     "vue": "^3.3.0",
-    "vue-router": "^4.2.0"
+    "vue-router": "^4.6.4"
   },
   "devDependencies": {
     "@capacitor/cli": "8.3.0",
+    "@tauri-apps/cli": "^2.10.1",
     "@vitejs/plugin-legacy": "^5.0.0",
     "@vitejs/plugin-vue": "^4.0.0",
     "@vue/eslint-config-typescript": "^12.0.0",
