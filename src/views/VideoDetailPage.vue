@@ -3,9 +3,9 @@
     <ion-header>
       <ion-toolbar>
         <ion-buttons slot="start">
-          <ion-back-button default-href="/tabs/videos" text="返回"></ion-back-button>
+          <ion-back-button default-href="/tabs/videos" text="返回" />
         </ion-buttons>
-        <ion-title>{{ video?.title || '视频播放' }}</ion-title>
+        <ion-title>{{ video?.title || '视频详情' }}</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content>
@@ -14,43 +14,39 @@
         <p>加载中...</p>
       </div>
 
-      <template v-if="video">
-        <!-- Video Player -->
-        <div class="video-container">
+      <div v-else-if="!video" class="empty-state">
+        <ion-icon :icon="playCircleOutline" class="empty-icon" />
+        <p>视频不存在</p>
+      </div>
+
+      <template v-else>
+        <div class="video-player-wrapper">
           <video
-            v-if="video.videoUrl"
             ref="videoEl"
             class="video-player"
             controls
-            controlslist="nodownload"
+            playsinline
+            :src="video.videoUrl"
             :poster="video.coverUrl"
-            preload="metadata"
-          >
-            <source :src="video.videoUrl" />
-            您的浏览器不支持视频播放
-          </video>
-          <div v-else class="no-video">
-            <ion-icon :icon="playCircleOutline" class="no-video-icon"></ion-icon>
-            <p>视频地址不可用</p>
-          </div>
+          />
         </div>
-
-        <!-- Video Info -->
-        <div class="video-info ion-padding">
+        <div class="video-info">
           <h2>{{ video.title }}</h2>
           <p v-if="video.description" class="description">{{ video.description }}</p>
+          <div class="meta-row">
+            <ion-badge v-if="video.category" color="primary" class="meta-badge">
+              {{ video.category }}
+            </ion-badge>
+            <span v-if="video.date" class="meta-date">{{ video.date }}</span>
+          </div>
         </div>
       </template>
-
-      <div v-if="!loading && !video" class="empty-state">
-        <p>未找到该视频</p>
-      </div>
     </ion-content>
   </ion-page>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { useRoute } from 'vue-router';
 import {
   IonPage,
@@ -60,8 +56,9 @@ import {
   IonContent,
   IonButtons,
   IonBackButton,
-  IonIcon,
   IonSpinner,
+  IonIcon,
+  IonBadge,
 } from '@ionic/vue';
 import { playCircleOutline } from 'ionicons/icons';
 import { getVideos } from '@/services/cos';
@@ -70,16 +67,25 @@ import type { VideoItem } from '@/types';
 const route = useRoute();
 const loading = ref(true);
 const video = ref<VideoItem | null>(null);
+const videoEl = ref<HTMLVideoElement | null>(null);
 
 onMounted(async () => {
   try {
+    const videoId = route.params.id as string;
     const videos = await getVideos();
-    const id = route.params.id as string;
-    video.value = videos.find((v) => v.id === id) || null;
+    video.value = videos.find((v) => v.id === videoId) || null;
   } catch (e) {
     console.error('加载视频详情失败:', e);
   } finally {
     loading.value = false;
+  }
+});
+
+onBeforeUnmount(() => {
+  if (videoEl.value) {
+    videoEl.value.pause();
+    videoEl.value.removeAttribute('src');
+    videoEl.value.load();
   }
 });
 </script>
@@ -95,47 +101,59 @@ onMounted(async () => {
   color: var(--ion-color-medium);
 }
 
-.video-container {
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  color: var(--ion-color-medium);
+}
+
+.empty-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.video-player-wrapper {
   width: 100%;
   background: #000;
 }
 
 .video-player {
   width: 100%;
-  max-height: 56.25vw; /* 16:9 */
   display: block;
+  max-height: 60vh;
 }
 
-.no-video {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 56.25vw;
-  color: var(--ion-color-medium);
-}
-
-.no-video-icon {
-  font-size: 64px;
-  margin-bottom: 8px;
+.video-info {
+  padding: 16px;
 }
 
 .video-info h2 {
-  font-size: 18px;
+  margin: 0 0 8px;
+  font-size: 1.2rem;
   font-weight: 600;
-  margin-bottom: 8px;
 }
 
 .description {
-  line-height: 1.6;
-  color: var(--ion-color-medium-shade);
+  color: var(--ion-color-medium);
+  line-height: 1.5;
+  margin: 0 0 12px;
 }
 
-.empty-state {
+.meta-row {
   display: flex;
   align-items: center;
-  justify-content: center;
-  height: 300px;
+  gap: 8px;
+}
+
+.meta-badge {
+  font-size: 12px;
+}
+
+.meta-date {
+  font-size: 12px;
   color: var(--ion-color-medium);
 }
 </style>

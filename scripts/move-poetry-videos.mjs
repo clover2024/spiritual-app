@@ -1,0 +1,101 @@
+import COS from 'cos-nodejs-sdk-v5';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const envPath = path.join(__dirname, '..', '.env');
+const envContent = fs.readFileSync(envPath, 'utf-8');
+for (const line of envContent.split('\n')) {
+  const m = line.match(/^\s*([A-Z_]+)\s*=\s*(.+)\s*$/);
+  if (m && !process.env[m[1]]) {
+    process.env[m[1]] = m[2].trim();
+  }
+}
+
+const BUCKET = 'clover-1256096296';
+const REGION = 'ap-shanghai';
+const cos = new COS({ SecretId: process.env.COS_SECRET_ID, SecretKey: process.env.COS_SECRET_KEY });
+
+function downloadManifest() {
+  return new Promise((resolve, reject) => {
+    cos.getObject({ Bucket: BUCKET, Region: REGION, Key: '/manifest.json' }, (err, data) => {
+      if (err) {
+        if (err.statusCode === 404) resolve({ videos: [], hymns: [], books: [] });
+        else reject(err);
+      } else {
+        resolve(JSON.parse(data.Body.toString()));
+      }
+    });
+  });
+}
+
+function uploadManifest(manifest) {
+  return new Promise((resolve, reject) => {
+    cos.putObject({
+      Bucket: BUCKET, Region: REGION, Key: '/manifest.json',
+      Body: JSON.stringify(manifest, null, 2), ContentType: 'application/json',
+    }, (err, data) => {
+      if (err) reject(err); else resolve(data);
+    });
+  });
+}
+
+function copyObject(srcKey, destKey) {
+  return new Promise((resolve, reject) => {
+    cos.putObjectCopy({
+      Bucket: BUCKET, Region: REGION, Key: destKey,
+      CopySource: `${BUCKET}.cos.${REGION}.myqcloud.com${encodeURI(srcKey)}`,
+    }, (err, data) => {
+      if (err) reject(err); else resolve(data);
+    });
+  });
+}
+
+function deleteObject(key) {
+  return new Promise((resolve, reject) => {
+    cos.deleteObject({ Bucket: BUCKET, Region: REGION, Key: key }, (err, data) => {
+      if (err) reject(err); else resolve(data);
+    });
+  });
+}
+
+async function main() {
+  const manifest = await downloadManifest();
+  const videos = manifest.videos || [];
+
+  // 找出 category 为 "诗歌视频" 且路径还在 /videos/ 根目录的
+  const toMove = videos.filter(v =>
+    v.category === '诗歌视频' && v.videoUrl && !v.videoUrl.includes('/诗歌视频/')
+  );
+
+  if (toMove.length === 0) {
+    console.log('没有需要移动的诗歌视频');
+    return;
+  }
+
+  console.log(`找到 ${toMove.length} 个诗歌视频需要移动:\n`);
+
+  for (const video of toMove) {
+    const oldKey = video.videoUrl;
+    const fileName = oldKey.split('/').pop();
+    const newKey = `/videos/诗歌视频/${fileName}`;
+
+    console.log(`  ${fileName}`);
+    console.log(`    ${oldKey} -> ${newKey}`);
+
+    await copyObject(oldKey, newKey);
+    await deleteObject(oldKey);
+    video.videoUrl = newKey;
+
+    console.log('    done');
+  }
+
+  await uploadManifest(manifest);
+  console.log(`\nManifest updated! Moved ${toMove.length} files.`);
+}
+
+main().catch(err => {
+  console.error('Error:', err.message || err);
+  process.exit(1);
+});

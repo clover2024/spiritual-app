@@ -4,13 +4,11 @@
       <ion-toolbar>
         <ion-title>视频资源</ion-title>
       </ion-toolbar>
-      <ion-toolbar>
-        <ion-searchbar
-          v-model="searchQuery"
-          placeholder="搜索视频"
-          :debounce="300"
-        ></ion-searchbar>
-      </ion-toolbar>
+      <ion-searchbar
+        v-model="searchQuery"
+        placeholder="搜索视频"
+        :debounce="300"
+      />
     </ion-header>
     <ion-content>
       <ion-refresher slot="fixed" @ionRefresh="handleRefresh($event)">
@@ -23,63 +21,99 @@
       </div>
 
       <template v-else>
-        <!-- 分类筛选 -->
-        <div v-if="categories.length > 0" class="category-bar">
-          <ion-chip
-            :outline="selectedCategory !== ''"
-            :color="selectedCategory === '' ? 'primary' : 'medium'"
-            @click="selectedCategory = ''"
-          >
-            <ion-label>全部</ion-label>
-          </ion-chip>
-          <ion-chip
-            v-for="cat in categories"
-            :key="cat"
-            :outline="selectedCategory !== cat"
-            :color="selectedCategory === cat ? 'primary' : 'medium'"
-            @click="selectedCategory = cat"
-          >
-            <ion-label>{{ cat }}</ion-label>
-          </ion-chip>
+        <!-- 面包屑导航（进入文件夹后显示） -->
+        <div v-if="selectedFolder" class="breadcrumb">
+          <span class="breadcrumb-item" @click="selectedFolder = ''">
+            <ion-icon :icon="homeOutline" />
+            <span>全部视频</span>
+          </span>
+          <ion-icon :icon="chevronForwardOutline" class="breadcrumb-sep" />
+          <span class="breadcrumb-current">{{ selectedFolder }}</span>
         </div>
 
-        <!-- 视频列表 -->
-        <ion-list lines="none">
-          <ion-item
-            v-for="video in filteredVideos"
-            :key="video.id"
-            button
-            detail
-            @click="goToVideo(video.id)"
-          >
-            <ion-thumbnail slot="start" class="video-thumbnail">
-              <ion-img
-                v-if="video.coverUrl"
-                :src="video.coverUrl"
-                :alt="video.title"
-              ></ion-img>
-              <div v-else class="thumbnail-placeholder">
-                <ion-icon :icon="playCircleOutline"></ion-icon>
+        <!-- 文件夹视图（未选中文件夹且无搜索时） -->
+        <div v-if="!selectedFolder && !searchQuery" class="folder-section">
+          <div class="folder-grid">
+            <div
+              v-for="folder in folders"
+              :key="folder.name"
+              class="folder-card"
+              @click="selectedFolder = folder.name"
+            >
+              <div class="folder-card-icon">
+                <ion-icon :icon="folderOutline" />
               </div>
-              <div v-if="video.duration" class="duration-badge">
-                {{ video.duration }}
+              <div class="folder-card-info">
+                <span class="folder-name">{{ folder.name }}</span>
+                <span class="folder-count">{{ folder.count }} 个视频</span>
               </div>
-            </ion-thumbnail>
-            <ion-label>
-              <h3>{{ video.title }}</h3>
-              <p v-if="video.description" class="description">{{ video.description }}</p>
-              <div class="tag-row">
-                <ion-badge v-if="video.category" color="tertiary" class="tag-badge">
-                  {{ video.category }}
-                </ion-badge>
-              </div>
-            </ion-label>
-          </ion-item>
-        </ion-list>
+              <ion-icon :icon="chevronForwardOutline" class="folder-arrow" />
+            </div>
+          </div>
 
-        <div v-if="filteredVideos.length === 0" class="empty-state">
-          <ion-icon :icon="videocamOutline" class="empty-icon"></ion-icon>
-          <p>{{ searchQuery ? '未找到匹配的视频' : '暂无视频内容' }}</p>
+          <!-- 无分类视频 -->
+          <div v-if="uncategorizedVideos.length" class="unclassified-section">
+            <div class="section-title">其他视频</div>
+            <ion-list lines="none">
+              <ion-item
+                v-for="video in uncategorizedVideos"
+                :key="video.id"
+                button
+                detail
+                @click="goToVideo(video.id)"
+              >
+                <ion-thumbnail slot="start" class="video-thumbnail">
+                  <ion-img v-if="video.coverUrl" :src="video.coverUrl" :alt="video.title" />
+                  <div v-else class="thumbnail-placeholder">
+                    <ion-icon :icon="playCircleOutline" />
+                  </div>
+                  <div v-if="video.duration" class="duration-badge">
+                    {{ video.duration }}
+                  </div>
+                </ion-thumbnail>
+                <ion-label>
+                  <h3>{{ video.title }}</h3>
+                  <p v-if="video.description" class="description">{{ video.description }}</p>
+                </ion-label>
+              </ion-item>
+            </ion-list>
+          </div>
+        </div>
+
+        <!-- 视频列表（选中文件夹 或 搜索中） -->
+        <div v-else>
+          <div v-if="filteredVideos.length === 0" class="empty-state">
+            <ion-icon :icon="playCircleOutline" class="empty-icon" />
+            <p>没有找到视频</p>
+          </div>
+          <ion-list v-else lines="none">
+            <ion-item
+              v-for="video in filteredVideos"
+              :key="video.id"
+              button
+              detail
+              @click="goToVideo(video.id)"
+            >
+              <ion-thumbnail slot="start" class="video-thumbnail">
+                <ion-img v-if="video.coverUrl" :src="video.coverUrl" :alt="video.title" />
+                <div v-else class="thumbnail-placeholder">
+                  <ion-icon :icon="playCircleOutline" />
+                </div>
+                <div v-if="video.duration" class="duration-badge">
+                  {{ video.duration }}
+                </div>
+              </ion-thumbnail>
+              <ion-label>
+                <h3>{{ video.title }}</h3>
+                <p v-if="video.description" class="description">{{ video.description }}</p>
+                <div class="tag-row">
+                  <ion-badge v-if="video.category" color="light" class="tag-badge">
+                    {{ video.category }}
+                  </ion-badge>
+                </div>
+              </ion-label>
+            </ion-item>
+          </ion-list>
         </div>
       </template>
     </ion-content>
@@ -105,43 +139,67 @@ import {
   IonSpinner,
   IonRefresher,
   IonRefresherContent,
-  IonChip,
   IonBadge,
   RefresherCustomEvent,
 } from '@ionic/vue';
-import { playCircleOutline, videocamOutline } from 'ionicons/icons';
+import {
+  playCircleOutline,
+  folderOutline,
+  homeOutline,
+  chevronForwardOutline,
+} from 'ionicons/icons';
 import { getVideos } from '@/services/cos';
 import type { VideoItem } from '@/types';
 
 const router = useRouter();
 const loading = ref(true);
 const searchQuery = ref('');
-const selectedCategory = ref('');
+const selectedFolder = ref('');
 const videos = ref<VideoItem[]>([]);
 
-const categories = computed(() => {
-  const cats = new Set<string>();
+// 按 category 分组生成文件夹列表
+const folders = computed(() => {
+  const folderMap = new Map<string, { name: string; count: number }>();
   videos.value.forEach((v) => {
-    if (v.category) cats.add(v.category);
+    if (v.category) {
+      const existing = folderMap.get(v.category);
+      if (existing) {
+        existing.count++;
+      } else {
+        folderMap.set(v.category, { name: v.category, count: 1 });
+      }
+    }
   });
-  return Array.from(cats);
+  return Array.from(folderMap.values()).sort((a, b) =>
+    a.name.localeCompare(b.name)
+  );
 });
 
+// 无分类视频
+const uncategorizedVideos = computed(() => {
+  return videos.value.filter((v) => !v.category);
+});
+
+// 显示的视频列表（文件夹内 或 搜索结果）
 const filteredVideos = computed(() => {
-  let result = videos.value;
-  if (selectedCategory.value) {
-    result = result.filter((v) => v.category === selectedCategory.value);
+  if (selectedFolder.value) {
+    return videos.value.filter((v) => v.category === selectedFolder.value);
   }
   if (searchQuery.value) {
     const q = searchQuery.value.toLowerCase();
-    result = result.filter(
+    return videos.value.filter(
       (v) =>
         v.title.toLowerCase().includes(q) ||
-        v.description?.toLowerCase().includes(q)
+        v.description?.toLowerCase().includes(q) ||
+        v.category?.toLowerCase().includes(q)
     );
   }
-  return result;
+  return [];
 });
+
+function goToVideo(id: string) {
+  router.push(`/video/${id}`);
+}
 
 async function loadData() {
   try {
@@ -154,16 +212,14 @@ async function loadData() {
 }
 
 function handleRefresh(event: RefresherCustomEvent) {
-  getVideos().then((v) => {
-    videos.value = v;
-    event.target.complete();
-  }).catch(() => {
-    event.target.complete();
-  });
-}
-
-function goToVideo(id: string) {
-  router.push(`/video/${id}`);
+  getVideos()
+    .then((v) => {
+      videos.value = v;
+      event.target.complete();
+    })
+    .catch(() => {
+      event.target.complete();
+    });
 }
 
 onMounted(loadData);
@@ -180,23 +236,94 @@ onMounted(loadData);
   color: var(--ion-color-medium);
 }
 
-.category-bar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  padding: 12px 16px;
-}
-
-.thumbnail-placeholder {
-  width: 100%;
-  height: 100%;
+.breadcrumb {
   display: flex;
   align-items: center;
-  justify-content: center;
-  background: var(--ion-color-light);
-  border-radius: 4px;
-  font-size: 24px;
+  padding: 8px 12px;
+  gap: 4px;
+}
+
+.breadcrumb-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--ion-color-primary);
+  cursor: pointer;
+}
+
+.breadcrumb-sep {
+  font-size: 1rem;
   color: var(--ion-color-medium);
+}
+
+.breadcrumb-current {
+  color: var(--ion-text-color);
+  font-weight: 500;
+}
+
+.folder-section {
+  padding: 0;
+}
+
+.folder-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.folder-card {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: background 0.15s;
+  border-bottom: 1px solid var(--ion-color-light-shade);
+}
+
+.folder-card:hover {
+  background: rgba(var(--ion-color-primary-rgb), 0.06);
+}
+
+.folder-card-icon {
+  font-size: 1.8rem;
+  color: var(--ion-color-primary);
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.folder-card-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.folder-name {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.folder-count {
+  font-size: 0.8rem;
+  color: var(--ion-color-medium);
+}
+
+.folder-arrow {
+  font-size: 1.2rem;
+  color: var(--ion-color-medium);
+  flex-shrink: 0;
+}
+
+.unclassified-section {
+  margin-top: 12px;
+}
+
+.section-title {
+  padding: 12px 16px 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ion-color-medium);
+  text-transform: uppercase;
 }
 
 .video-thumbnail {
@@ -212,6 +339,17 @@ onMounted(loadData);
   font-size: 11px;
   padding: 2px 6px;
   border-radius: 3px;
+}
+
+.thumbnail-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: var(--ion-color-light-shade);
+  color: var(--ion-color-medium);
+  font-size: 1.5rem;
 }
 
 .description {

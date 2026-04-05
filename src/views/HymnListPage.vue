@@ -4,13 +4,11 @@
       <ion-toolbar>
         <ion-title>诗歌</ion-title>
       </ion-toolbar>
-      <ion-toolbar>
-        <ion-searchbar
-          v-model="searchQuery"
-          placeholder="搜索诗歌"
-          :debounce="300"
-        ></ion-searchbar>
-      </ion-toolbar>
+      <ion-searchbar
+        v-model="searchQuery"
+        placeholder="搜索诗歌"
+        :debounce="300"
+      />
     </ion-header>
     <ion-content>
       <ion-refresher slot="fixed" @ionRefresh="handleRefresh($event)">
@@ -23,56 +21,89 @@
       </div>
 
       <template v-else>
-        <!-- 分类筛选 -->
-        <div class="category-bar">
-          <ion-chip
-            :outline="selectedCategory !== ''"
-            :color="selectedCategory === '' ? 'primary' : 'medium'"
-            @click="selectedCategory = ''"
-          >
-            <ion-label>全部</ion-label>
-          </ion-chip>
-          <ion-chip
-            v-for="cat in categories"
-            :key="cat"
-            :outline="selectedCategory !== cat"
-            :color="selectedCategory === cat ? 'primary' : 'medium'"
-            @click="selectedCategory = cat"
-          >
-            <ion-label>{{ cat }}</ion-label>
-          </ion-chip>
+        <!-- 面包屑导航（进入文件夹后显示） -->
+        <div v-if="selectedFolder" class="breadcrumb">
+          <span class="breadcrumb-item" @click="selectedFolder = ''">
+            <ion-icon :icon="homeOutline" />
+            <span>全部诗歌</span>
+          </span>
+          <ion-icon :icon="chevronForwardOutline" class="breadcrumb-sep" />
+          <span class="breadcrumb-current">{{ selectedFolder }}</span>
         </div>
 
-        <!-- 诗歌列表 -->
-        <ion-list lines="full">
-          <ion-item
-            v-for="hymn in filteredHymns"
-            :key="hymn.id"
-            button
-            detail
-            @click="goToHymn(hymn.id)"
-          >
-            <ion-icon :icon="musicalNoteOutline" slot="start" class="hymn-icon"></ion-icon>
-            <ion-label>
-              <h3>{{ hymn.title }}</h3>
-              <p v-if="hymn.author" class="author-text">{{ hymn.author }}</p>
-              <p class="lyrics-preview">{{ getLyricsPreview(hymn.lyrics) }}</p>
-              <div class="tag-row">
-                <ion-badge v-if="hymn.category" color="tertiary" class="tag-badge">
-                  {{ hymn.category }}
-                </ion-badge>
-                <ion-badge v-if="hymn.audioUrl" color="success" class="tag-badge">
-                  <ion-icon :icon="headsetOutline" class="audio-badge-icon"></ion-icon>
-                  有音频
-                </ion-badge>
+        <!-- 文件夹视图（未选中文件夹且无搜索时） -->
+        <div v-if="!selectedFolder && !searchQuery" class="folder-section">
+          <div class="folder-grid">
+            <div
+              v-for="folder in folders"
+              :key="folder.name"
+              class="folder-card"
+              @click="selectedFolder = folder.name"
+            >
+              <div class="folder-card-icon">
+                <ion-icon :icon="folderOutline" />
               </div>
-            </ion-label>
-          </ion-item>
-        </ion-list>
+              <div class="folder-card-info">
+                <span class="folder-name">{{ folder.name }}</span>
+                <span class="folder-count">{{ folder.count }} 首</span>
+              </div>
+              <ion-icon :icon="chevronForwardOutline" class="folder-arrow" />
+            </div>
+          </div>
 
-        <div v-if="filteredHymns.length === 0" class="empty-state">
-          <ion-icon :icon="musicalNotesOutline" class="empty-icon"></ion-icon>
-          <p>{{ searchQuery ? '未找到匹配的诗歌' : '暂无诗歌内容' }}</p>
+          <!-- 无分类诗歌 -->
+          <div v-if="uncategorizedHymns.length" class="unclassified-section">
+            <div class="section-title">其他诗歌</div>
+            <ion-list lines="none">
+              <ion-item
+                v-for="hymn in uncategorizedHymns"
+                :key="hymn.id"
+                button
+                detail
+                @click="goToHymn(hymn.id)"
+              >
+                <ion-icon :icon="musicalNoteOutline" slot="start" class="hymn-icon"></ion-icon>
+                <ion-label>
+                  <h3>{{ hymn.title }}</h3>
+                  <p v-if="hymn.author" class="author-text">{{ hymn.author }}</p>
+                  <p class="lyrics-preview">{{ getLyricsPreview(hymn.lyrics) }}</p>
+                </ion-label>
+              </ion-item>
+            </ion-list>
+          </div>
+        </div>
+
+        <!-- 诗歌列表（选中文件夹 或 搜索中） -->
+        <div v-else>
+          <div v-if="filteredHymns.length === 0" class="empty-state">
+            <ion-icon :icon="musicalNotesOutline" class="empty-icon" />
+            <p>{{ searchQuery ? '未找到匹配的诗歌' : '暂无诗歌内容' }}</p>
+          </div>
+          <ion-list v-else lines="full">
+            <ion-item
+              v-for="hymn in filteredHymns"
+              :key="hymn.id"
+              button
+              detail
+              @click="goToHymn(hymn.id)"
+            >
+              <ion-icon :icon="musicalNoteOutline" slot="start" class="hymn-icon"></ion-icon>
+              <ion-label>
+                <h3>{{ hymn.title }}</h3>
+                <p v-if="hymn.author" class="author-text">{{ hymn.author }}</p>
+                <p class="lyrics-preview">{{ getLyricsPreview(hymn.lyrics) }}</p>
+                <div class="tag-row">
+                  <ion-badge v-if="hymn.category" color="tertiary" class="tag-badge">
+                    {{ hymn.category }}
+                  </ion-badge>
+                  <ion-badge v-if="hymn.audioUrl" color="success" class="tag-badge">
+                    <ion-icon :icon="headsetOutline" class="audio-badge-icon"></ion-icon>
+                    有音频
+                  </ion-badge>
+                </div>
+              </ion-label>
+            </ion-item>
+          </ion-list>
         </div>
       </template>
     </ion-content>
@@ -96,43 +127,65 @@ import {
   IonSpinner,
   IonRefresher,
   IonRefresherContent,
-  IonChip,
   IonBadge,
   RefresherCustomEvent,
 } from '@ionic/vue';
-import { musicalNoteOutline, musicalNotesOutline, headsetOutline } from 'ionicons/icons';
+import {
+  musicalNoteOutline,
+  musicalNotesOutline,
+  headsetOutline,
+  folderOutline,
+  homeOutline,
+  chevronForwardOutline,
+} from 'ionicons/icons';
 import { getHymns } from '@/services/cos';
 import type { HymnItem } from '@/types';
 
 const router = useRouter();
 const loading = ref(true);
 const searchQuery = ref('');
-const selectedCategory = ref('');
+const selectedFolder = ref('');
 const hymns = ref<HymnItem[]>([]);
 
-const categories = computed(() => {
-  const cats = new Set<string>();
+// 按 category 分组生成文件夹列表
+const folders = computed(() => {
+  const folderMap = new Map<string, { name: string; count: number }>();
   hymns.value.forEach((h) => {
-    if (h.category) cats.add(h.category);
+    if (h.category) {
+      const existing = folderMap.get(h.category);
+      if (existing) {
+        existing.count++;
+      } else {
+        folderMap.set(h.category, { name: h.category, count: 1 });
+      }
+    }
   });
-  return Array.from(cats);
+  return Array.from(folderMap.values()).sort((a, b) =>
+    a.name.localeCompare(b.name)
+  );
 });
 
+// 无分类诗歌
+const uncategorizedHymns = computed(() => {
+  return hymns.value.filter((h) => !h.category);
+});
+
+// 显示的诗歌列表（文件夹内 或 搜索结果）
 const filteredHymns = computed(() => {
-  let result = hymns.value;
-  if (selectedCategory.value) {
-    result = result.filter((h) => h.category === selectedCategory.value);
+  if (selectedFolder.value) {
+    return hymns.value.filter((h) => h.category === selectedFolder.value);
   }
   if (searchQuery.value) {
     const q = searchQuery.value.toLowerCase();
-    result = result.filter(
+    return hymns.value.filter(
       (h) =>
         h.title.toLowerCase().includes(q) ||
         h.author?.toLowerCase().includes(q) ||
-        h.lyrics?.toLowerCase().includes(q)
+        h.lyrics?.toLowerCase().includes(q) ||
+        h.category?.toLowerCase().includes(q)
     );
   }
-  return result;
+  return [];
 });
 
 function getLyricsPreview(lyrics: string): string {
@@ -177,11 +230,94 @@ onMounted(loadData);
   color: var(--ion-color-medium);
 }
 
-.category-bar {
+.breadcrumb {
   display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  padding: 12px 16px;
+  align-items: center;
+  padding: 8px 12px;
+  gap: 4px;
+}
+
+.breadcrumb-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--ion-color-primary);
+  cursor: pointer;
+}
+
+.breadcrumb-sep {
+  font-size: 1rem;
+  color: var(--ion-color-medium);
+}
+
+.breadcrumb-current {
+  color: var(--ion-text-color);
+  font-weight: 500;
+}
+
+.folder-section {
+  padding: 0;
+}
+
+.folder-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.folder-card {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: background 0.15s;
+  border-bottom: 1px solid var(--ion-color-light-shade);
+}
+
+.folder-card:hover {
+  background: rgba(var(--ion-color-primary-rgb), 0.06);
+}
+
+.folder-card-icon {
+  font-size: 1.8rem;
+  color: var(--ion-color-tertiary);
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.folder-card-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.folder-name {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.folder-count {
+  font-size: 0.8rem;
+  color: var(--ion-color-medium);
+}
+
+.folder-arrow {
+  font-size: 1.2rem;
+  color: var(--ion-color-medium);
+  flex-shrink: 0;
+}
+
+.unclassified-section {
+  margin-top: 12px;
+}
+
+.section-title {
+  padding: 12px 16px 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ion-color-medium);
+  text-transform: uppercase;
 }
 
 .hymn-icon {

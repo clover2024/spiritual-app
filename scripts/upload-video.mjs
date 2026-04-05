@@ -28,17 +28,18 @@ const cos = new COS({ SecretId: SECRET_ID, SecretKey: SECRET_KEY });
 
 const FILE_PATH = process.argv[2];
 if (!FILE_PATH) {
-  console.error('Usage: node scripts/upload-video.mjs <file> [--type video|hymn] [--title <title>] [--category <category>]');
+  console.error('Usage: node scripts/upload-video.mjs <file> [--type video|hymn] [--title <title>] [--category <category>] [--folder <folder>]');
   process.exit(1);
 }
-
 let fileType = 'video';
 let customTitle = null;
 let customCategory = null;
+let folder = null;
 for (let i = 3; i < process.argv.length; i++) {
   if (process.argv[i] === '--type' && process.argv[i + 1]) fileType = process.argv[++i];
   else if (process.argv[i] === '--title' && process.argv[i + 1]) customTitle = process.argv[++i];
   else if (process.argv[i] === '--category' && process.argv[i + 1]) customCategory = process.argv[++i];
+  else if (process.argv[i] === '--folder' && process.argv[i + 1]) folder = process.argv[++i];
 }
 
 const fileName = path.basename(FILE_PATH);
@@ -49,6 +50,8 @@ const title = customTitle || baseName;
 let cosKey;
 if (fileType === 'hymn') {
   cosKey = `/hymns/${fileName}`;
+} else if (folder) {
+  cosKey = `/videos/${folder}/${fileName}`;
 } else {
   cosKey = `/videos/${fileName}`;
 }

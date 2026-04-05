@@ -3,11 +3,6 @@
     <ion-tabs>
       <ion-router-outlet></ion-router-outlet>
       <ion-tab-bar slot="bottom">
-        <ion-tab-button tab="home" href="/tabs/home">
-          <ion-icon aria-hidden="true" :icon="homeOutline" />
-          <ion-label>首页</ion-label>
-        </ion-tab-button>
-
         <ion-tab-button tab="videos" href="/tabs/videos">
           <ion-icon aria-hidden="true" :icon="playCircleOutline" />
           <ion-label>视频</ion-label>
@@ -47,5 +42,5 @@ import {
   IonPage,
   IonRouterOutlet,
 } from '@ionic/vue';
-import { homeOutline, playCircleOutline, bookOutline, musicalNotesOutline, heartOutline, calendarOutline } from 'ionicons/icons';
+import { playCircleOutline, bookOutline, musicalNotesOutline, heartOutline, calendarOutline } from 'ionicons/icons';
 </script>
