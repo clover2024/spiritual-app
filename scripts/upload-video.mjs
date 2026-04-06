@@ -28,18 +28,20 @@ const cos = new COS({ SecretId: SECRET_ID, SecretKey: SECRET_KEY });
 
 const FILE_PATH = process.argv[2];
 if (!FILE_PATH) {
-  console.error('Usage: node scripts/upload-video.mjs <file> [--type video|hymn] [--title <title>] [--category <category>] [--folder <folder>]');
+  console.error('Usage: node scripts/upload-video.mjs <file> [--type video|book|hymn] [--title <title>] [--category <category>] [--folder <folder>] [--author <author>]');
   process.exit(1);
 }
 let fileType = 'video';
 let customTitle = null;
 let customCategory = null;
+let customAuthor = null;
 let folder = null;
 for (let i = 3; i < process.argv.length; i++) {
   if (process.argv[i] === '--type' && process.argv[i + 1]) fileType = process.argv[++i];
   else if (process.argv[i] === '--title' && process.argv[i + 1]) customTitle = process.argv[++i];
   else if (process.argv[i] === '--category' && process.argv[i + 1]) customCategory = process.argv[++i];
   else if (process.argv[i] === '--folder' && process.argv[i + 1]) folder = process.argv[++i];
+  else if (process.argv[i] === '--author' && process.argv[i + 1]) customAuthor = process.argv[++i];
 }
 
 const fileName = path.basename(FILE_PATH);
@@ -48,7 +50,9 @@ const baseName = path.parse(fileName).name;
 const title = customTitle || baseName;
 
 let cosKey;
-if (fileType === 'hymn') {
+if (fileType === 'book') {
+  cosKey = `/books/${fileName}`;
+} else if (fileType === 'hymn') {
   cosKey = `/hymns/${fileName}`;
 } else if (folder) {
   cosKey = `/videos/${folder}/${fileName}`;
@@ -115,7 +119,13 @@ async function main() {
     const today = new Date().toISOString().split('T')[0];
     const id = fileType + '-' + Date.now() + Math.random().toString(36).slice(2, 5);
 
-    if (fileType === 'hymn') {
+    if (fileType === 'book') {
+      if (!manifest.books) manifest.books = [];
+      const bookEntry = { id, title, fileUrl: cosKey, format: ext.replace('.', '') || 'pdf', date: today };
+      if (customAuthor) bookEntry.author = customAuthor;
+      manifest.books.push(bookEntry);
+      console.log(`Added book: ${title}`);
+    } else if (fileType === 'hymn') {
       if (!manifest.hymns) manifest.hymns = [];
       manifest.hymns.push({ id, title, audioUrl: cosKey, lyrics: '', date: today });
       console.log(`Added hymn: ${title}`);
