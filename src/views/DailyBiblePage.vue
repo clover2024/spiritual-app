@@ -26,11 +26,11 @@
         <!-- 月份筛选 -->
         <div class="month-bar">
           <ion-chip
-            :outline="selectedMonth === 0"
-            :color="selectedMonth === 0 ? 'primary' : 'medium'"
-            @click="selectedMonth = 0"
+            :outline="selectedMonth !== -1"
+            :color="selectedMonth === -1 ? 'primary' : 'medium'"
+            @click="selectedMonth = -1"
           >
-            <ion-label>全部</ion-label>
+            <ion-label>当日</ion-label>
           </ion-chip>
           <ion-chip
             v-for="m in months"
@@ -113,13 +113,17 @@ interface FlatDay extends DailyBibleDay {
 const router = useRouter();
 const loading = ref(true);
 const searchQuery = ref('');
-const selectedMonth = ref(0);
+const now = new Date();
+const todayStr = `${now.getMonth() + 1}月${now.getDate()}日`;
+const selectedMonth = ref(-1);
 const months = ref<DailyBibleMonth[]>([]);
 const allDays = ref<FlatDay[]>([]);
 
 const filteredDays = computed(() => {
   let result = allDays.value;
-  if (selectedMonth.value) {
+  if (selectedMonth.value === -1) {
+    result = result.filter((d) => d.date === todayStr);
+  } else if (selectedMonth.value) {
     result = result.filter((d) => d.month === selectedMonth.value);
   }
   if (searchQuery.value) {
