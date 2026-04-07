@@ -2,7 +2,7 @@
   <ion-page>
     <ion-header>
       <ion-toolbar>
-        <ion-title>属灵加油站</ion-title>
+        <ion-title>橄榄山</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content class="ion-padding">

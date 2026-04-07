@@ -1,5 +1,5 @@
 {
-  "productName": "属灵加油站",
+  "productName": "橄榄山",
   "version": "1.0.0",
   "identifier": "com.spiritual.app",
   "build": {
@@ -11,7 +11,7 @@
   "app": {
     "windows": [
       {
-        "title": "属灵加油站",
+        "title": "橄榄山",
         "width": 1200,
         "height": 800,
         "resizable": true,
