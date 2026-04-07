@@ -5,7 +5,7 @@ import TabsPage from '../views/TabsPage.vue';
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    redirect: '/tabs/videos',
+    redirect: '/tabs/gospel',
   },
   {
     path: '/tabs/',
@@ -13,7 +13,7 @@ const routes: Array<RouteRecordRaw> = [
     children: [
       {
         path: '',
-        redirect: '/tabs/videos',
+        redirect: '/tabs/gospel',
       },
       {
         path: 'videos',
@@ -35,6 +35,10 @@ const routes: Array<RouteRecordRaw> = [
         path: 'support',
         component: () => import('@/views/SupportPage.vue'),
       },
+      {
+        path: 'gospel',
+        component: () => import('@/views/GospelStationPage.vue'),
+      },
     ],
   },
   {
@@ -52,6 +56,10 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/daily-bible/:month/:day',
     component: () => import('@/views/DailyBibleDetailPage.vue'),
+  },
+  {
+    path: '/gospel/:id',
+    component: () => import('@/views/GospelDetailPage.vue'),
   },
 ];
 

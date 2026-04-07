@@ -1,4 +1,4 @@
-import type { Manifest, VideoItem, BookItem, HymnItem, DailyBibleMonth } from '@/types';
+import type { Manifest, VideoItem, BookItem, HymnItem, DailyBibleMonth, GospelArticle } from '@/types';
 
 const COS_BASE_URL = import.meta.env.VITE_COS_BASE_URL || '';
 const MANIFEST_PATH = '/manifest.json';
@@ -51,6 +51,11 @@ export async function fetchManifest(): Promise<Manifest> {
       h.audioUrl = resolveUrl(h.audioUrl, baseUrl);
       h.coverUrl = resolveUrl(h.coverUrl, baseUrl);
     });
+    manifest.gospelArticles?.forEach(g => {
+      g.contentUrl = resolveUrl(g.contentUrl, baseUrl) || '';
+      g.audioUrl = resolveUrl(g.audioUrl, baseUrl);
+      g.coverUrl = resolveUrl(g.coverUrl, baseUrl);
+    });
     cachedManifest = manifest;
     cacheTimestamp = now;
     return manifest;
@@ -73,6 +78,11 @@ export async function getBooks(): Promise<BookItem[]> {
 export async function getHymns(): Promise<HymnItem[]> {
   const manifest = await fetchManifest();
   return manifest.hymns || [];
+}
+
+export async function getGospelArticles(): Promise<GospelArticle[]> {
+  const manifest = await fetchManifest();
+  return manifest.gospelArticles || [];
 }
 
 let cachedDailyBible: DailyBibleMonth[] | null = null;

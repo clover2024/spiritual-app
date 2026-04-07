@@ -45,9 +45,21 @@ export interface DailyBibleMonth {
   days: DailyBibleDay[];
 }
 
+export interface GospelArticle {
+  id: string;
+  title: string;
+  author?: string;
+  summary?: string;
+  contentUrl: string;
+  audioUrl?: string;
+  coverUrl?: string;
+  date?: string;
+}
+
 export interface Manifest {
   videos?: VideoItem[];
   books?: BookItem[];
   hymns?: HymnItem[];
   dailyBible?: DailyBibleMonth[];
+  gospelArticles?: GospelArticle[];
 }

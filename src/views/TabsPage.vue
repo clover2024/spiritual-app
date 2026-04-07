@@ -3,6 +3,11 @@
     <ion-tabs>
       <ion-router-outlet></ion-router-outlet>
       <ion-tab-bar slot="bottom">
+        <ion-tab-button tab="gospel" href="/tabs/gospel">
+          <ion-icon aria-hidden="true" :icon="documentTextOutline" />
+          <ion-label>福音基站</ion-label>
+        </ion-tab-button>
+
         <ion-tab-button tab="videos" href="/tabs/videos">
           <ion-icon aria-hidden="true" :icon="playCircleOutline" />
           <ion-label>视频</ion-label>
@@ -42,5 +47,5 @@ import {
   IonPage,
   IonRouterOutlet,
 } from '@ionic/vue';
-import { playCircleOutline, bookOutline, musicalNotesOutline, heartOutline, calendarOutline } from 'ionicons/icons';
+import { playCircleOutline, bookOutline, musicalNotesOutline, calendarOutline, documentTextOutline, heartOutline } from 'ionicons/icons';
 </script>
