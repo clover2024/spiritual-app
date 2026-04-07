@@ -130,6 +130,14 @@ onMounted(loadArticle);
   font-size: 16px;
 }
 
+.article-content :deep(strong) {
+  font-weight: 700;
+}
+
+.article-content :deep(em) {
+  font-style: italic;
+}
+
 .article-content :deep(h1),
 .article-content :deep(h2),
 .article-content :deep(h3) {
