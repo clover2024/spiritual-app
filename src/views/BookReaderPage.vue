@@ -76,6 +76,7 @@ import {
 import { arrowBackOutline, arrowForwardOutline, bookOutline } from 'ionicons/icons';
 import { getBooks } from '@/services/cos';
 import { setPageMeta, resetPageMeta } from '@/composables/usePageMeta';
+import { setupWxShare } from '@/composables/useWxShare';
 import type { BookItem } from '@/types';
 
 const route = useRoute();
@@ -102,7 +103,7 @@ onMounted(async () => {
 
     if (book.value) {
       const desc = [book.value.author, book.value.description].filter(Boolean).join(' - ');
-      setPageMeta({ title: book.value.title, description: desc });
+      setupWxShare({ title: book.value.title, description: desc });
     }
 
     if (book.value?.fileUrl) {

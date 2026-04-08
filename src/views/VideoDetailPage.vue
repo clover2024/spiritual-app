@@ -63,6 +63,7 @@ import {
 import { playCircleOutline } from 'ionicons/icons';
 import { getVideos } from '@/services/cos';
 import { setPageMeta, resetPageMeta } from '@/composables/usePageMeta';
+import { setupWxShare } from '@/composables/useWxShare';
 import type { VideoItem } from '@/types';
 
 const route = useRoute();
@@ -76,7 +77,7 @@ onMounted(async () => {
     const videos = await getVideos();
     video.value = videos.find((v) => v.id === videoId) || null;
     if (video.value) {
-      setPageMeta({
+      setupWxShare({
         title: video.value.title,
         description: video.value.description,
         image: video.value.coverUrl,

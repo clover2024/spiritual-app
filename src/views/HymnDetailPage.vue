@@ -81,6 +81,7 @@ import {
 } from '@ionic/vue';
 import { getHymns } from '@/services/cos';
 import { setPageMeta, resetPageMeta } from '@/composables/usePageMeta';
+import { setupWxShare } from '@/composables/useWxShare';
 import type { HymnItem } from '@/types';
 
 const route = useRoute();
@@ -101,7 +102,7 @@ onMounted(async () => {
     hymn.value = allHymns.find((h) => h.id === id) || null;
     if (hymn.value) {
       const desc = hymn.value.author || hymn.value.lyrics?.split('\n')[0] || '';
-      setPageMeta({ title: hymn.value.title, description: desc });
+      setupWxShare({ title: hymn.value.title, description: desc });
     }
   } catch (e) {
     console.error('加载诗歌详情失败:', e);

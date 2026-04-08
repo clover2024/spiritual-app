@@ -53,6 +53,7 @@ import {
 import { marked } from 'marked';
 import { getGospelArticles } from '@/services/cos';
 import { setPageMeta, resetPageMeta } from '@/composables/usePageMeta';
+import { setupWxShare } from '@/composables/useWxShare';
 import type { GospelArticle } from '@/types';
 
 const route = useRoute();
@@ -72,7 +73,7 @@ async function loadArticle() {
     const found = articles.find((a) => a.id === articleId);
     if (found) {
       article.value = found;
-      setPageMeta({
+      setupWxShare({
         title: found.title,
         description: found.summary,
         image: found.coverUrl,

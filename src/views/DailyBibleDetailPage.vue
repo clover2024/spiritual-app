@@ -78,6 +78,7 @@ import { bookOutline } from 'ionicons/icons';
 import { getDailyBible } from '@/services/cos';
 import { marked } from 'marked';
 import { setPageMeta, resetPageMeta } from '@/composables/usePageMeta';
+import { setupWxShare } from '@/composables/useWxShare';
 import type { DailyBibleDay } from '@/types';
 
 const route = useRoute();
@@ -98,7 +99,7 @@ onMounted(async () => {
     }
 
     if (dayData.value) {
-      setPageMeta({
+      setupWxShare({
         title: dayData.value.title,
         description: `${dayData.value.date} - 每日读经`,
       });
