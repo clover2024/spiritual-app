@@ -66,7 +66,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useRoute } from 'vue-router';
 import {
   IonPage,
@@ -80,6 +80,7 @@ import {
   IonSpinner,
 } from '@ionic/vue';
 import { getHymns } from '@/services/cos';
+import { setPageMeta, resetPageMeta } from '@/composables/usePageMeta';
 import type { HymnItem } from '@/types';
 
 const route = useRoute();
@@ -98,11 +99,19 @@ onMounted(async () => {
     const allHymns = await getHymns();
     const id = route.params.id as string;
     hymn.value = allHymns.find((h) => h.id === id) || null;
+    if (hymn.value) {
+      const desc = hymn.value.author || hymn.value.lyrics?.split('\n')[0] || '';
+      setPageMeta({ title: hymn.value.title, description: desc });
+    }
   } catch (e) {
     console.error('加载诗歌详情失败:', e);
   } finally {
     loading.value = false;
   }
+});
+
+onBeforeUnmount(() => {
+  resetPageMeta();
 });
 </script>
 

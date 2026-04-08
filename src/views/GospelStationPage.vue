@@ -70,7 +70,8 @@ const articles = ref<any[]>([]);
 
 async function loadData() {
   try {
-    articles.value = await getGospelArticles();
+    const data = await getGospelArticles();
+    articles.value = data.sort((a, b) => a.title.localeCompare(b.title, 'zh'));
   } catch (e) {
     console.error('加载文章失败:', e);
   } finally {
@@ -80,7 +81,7 @@ async function loadData() {
 
 function handleRefresh(event: RefresherCustomEvent) {
   getGospelArticles().then((data) => {
-    articles.value = data;
+    articles.value = data.sort((a, b) => a.title.localeCompare(b.title, 'zh'));
     event.target.complete();
   }).catch(() => {
     event.target.complete();

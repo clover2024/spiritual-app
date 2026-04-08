@@ -62,6 +62,7 @@ import {
 } from '@ionic/vue';
 import { playCircleOutline } from 'ionicons/icons';
 import { getVideos } from '@/services/cos';
+import { setPageMeta, resetPageMeta } from '@/composables/usePageMeta';
 import type { VideoItem } from '@/types';
 
 const route = useRoute();
@@ -74,6 +75,13 @@ onMounted(async () => {
     const videoId = route.params.id as string;
     const videos = await getVideos();
     video.value = videos.find((v) => v.id === videoId) || null;
+    if (video.value) {
+      setPageMeta({
+        title: video.value.title,
+        description: video.value.description,
+        image: video.value.coverUrl,
+      });
+    }
   } catch (e) {
     console.error('加载视频详情失败:', e);
   } finally {
@@ -82,6 +90,7 @@ onMounted(async () => {
 });
 
 onBeforeUnmount(() => {
+  resetPageMeta();
   if (videoEl.value) {
     videoEl.value.pause();
     videoEl.value.removeAttribute('src');

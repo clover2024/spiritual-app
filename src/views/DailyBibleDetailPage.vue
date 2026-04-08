@@ -61,7 +61,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { useRoute } from 'vue-router';
 import {
   IonPage,
@@ -77,6 +77,7 @@ import {
 import { bookOutline } from 'ionicons/icons';
 import { getDailyBible } from '@/services/cos';
 import { marked } from 'marked';
+import { setPageMeta, resetPageMeta } from '@/composables/usePageMeta';
 import type { DailyBibleDay } from '@/types';
 
 const route = useRoute();
@@ -94,6 +95,13 @@ onMounted(async () => {
     const month = allMonths.find((m) => m.month === monthNum);
     if (month) {
       dayData.value = month.days.find((d) => d.day === dayNum) || null;
+    }
+
+    if (dayData.value) {
+      setPageMeta({
+        title: dayData.value.title,
+        description: `${dayData.value.date} - 每日读经`,
+      });
     }
 
     if (dayData.value?.contentUrl) {
@@ -123,6 +131,10 @@ onMounted(async () => {
   } finally {
     loading.value = false;
   }
+});
+
+onBeforeUnmount(() => {
+  resetPageMeta();
 });
 </script>
 

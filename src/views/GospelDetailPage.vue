@@ -38,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useRoute } from 'vue-router';
 import {
   IonPage,
@@ -52,6 +52,7 @@ import {
 } from '@ionic/vue';
 import { marked } from 'marked';
 import { getGospelArticles } from '@/services/cos';
+import { setPageMeta, resetPageMeta } from '@/composables/usePageMeta';
 import type { GospelArticle } from '@/types';
 
 const route = useRoute();
@@ -71,6 +72,11 @@ async function loadArticle() {
     const found = articles.find((a) => a.id === articleId);
     if (found) {
       article.value = found;
+      setPageMeta({
+        title: found.title,
+        description: found.summary,
+        image: found.coverUrl,
+      });
       if (found.contentUrl) {
         const response = await fetch(found.contentUrl);
         if (response.ok) {
@@ -86,6 +92,10 @@ async function loadArticle() {
 }
 
 onMounted(loadArticle);
+
+onBeforeUnmount(() => {
+  resetPageMeta();
+});
 </script>
 
 <style scoped>

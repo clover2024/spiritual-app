@@ -75,6 +75,7 @@ import {
 } from '@ionic/vue';
 import { arrowBackOutline, arrowForwardOutline, bookOutline } from 'ionicons/icons';
 import { getBooks } from '@/services/cos';
+import { setPageMeta, resetPageMeta } from '@/composables/usePageMeta';
 import type { BookItem } from '@/types';
 
 const route = useRoute();
@@ -99,6 +100,11 @@ onMounted(async () => {
     const id = route.params.id as string;
     book.value = books.find((b) => b.id === id) || null;
 
+    if (book.value) {
+      const desc = [book.value.author, book.value.description].filter(Boolean).join(' - ');
+      setPageMeta({ title: book.value.title, description: desc });
+    }
+
     if (book.value?.fileUrl) {
       await nextTick();
       if (book.value.format === 'pdf') {
@@ -115,6 +121,7 @@ onMounted(async () => {
 });
 
 onUnmounted(() => {
+  resetPageMeta();
   if (pdfDoc) {
     pdfDoc.destroy();
     pdfDoc = null;
