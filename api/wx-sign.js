@@ -1,4 +1,4 @@
-const crypto = require('crypto');
+import { createHash } from 'crypto';
 
 const APPID = 'wx4c9e3b7aa337c691';
 const APPSECRET = '7a721c79effe4082dfb185b21c159e8c';
@@ -31,10 +31,10 @@ async function getJsApiTicket() {
 
 function sign(ticket, nonceStr, timestamp, url) {
   const str = `jsapi_ticket=${ticket}&noncestr=${nonceStr}&timestamp=${timestamp}&url=${url}`;
-  return crypto.createHash('sha1').update(str).digest('hex');
+  return createHash('sha1').update(str).digest('hex');
 }
 
-module.exports = async (req, res) => {
+export default async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Cache-Control', 'no-cache');
