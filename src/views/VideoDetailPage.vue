@@ -51,6 +51,26 @@
             </div>
             <div class="lyrics-content" v-html="formattedLyrics"></div>
           </div>
+
+          <div v-if="relatedVideos.length" class="related-section">
+            <div class="related-title">相关推荐</div>
+            <div class="related-list">
+              <div
+                v-for="rv in relatedVideos"
+                :key="rv.id"
+                class="related-item"
+                @click="goToVideo(rv.id)"
+              >
+                <div class="related-thumb">
+                  <ion-icon :icon="playCircleOutline" />
+                </div>
+                <div class="related-info">
+                  <div class="related-name">{{ rv.title }}</div>
+                  <div v-if="rv.date" class="related-date">{{ rv.date }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </template>
     </ion-content>
@@ -58,8 +78,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
-import { useRoute } from 'vue-router';
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import {
   IonPage,
   IonHeader,
@@ -80,11 +100,24 @@ import { setupWxShare } from '@/composables/useWxShare';
 import type { VideoItem } from '@/types';
 
 const route = useRoute();
+const router = useRouter();
 const loading = ref(true);
 const video = ref<VideoItem | null>(null);
+const allVideos = ref<VideoItem[]>([]);
 const videoEl = ref<HTMLVideoElement | null>(null);
 const copySuccess = ref(false);
 let saveThrottleTimer = 0;
+
+const relatedVideos = computed(() => {
+  if (!video.value) return [];
+  return allVideos.value
+    .filter((v) => v.category && v.category === video.value!.category && v.id !== video.value!.id)
+    .slice(0, 10);
+});
+
+function goToVideo(id: string) {
+  router.push(`/video/${id}`);
+}
 
 function getProgressKey(id: string) {
   return `video-progress:${id}`;
@@ -155,6 +188,7 @@ onMounted(async () => {
   try {
     const videoId = route.params.id as string;
     const videos = await getVideos();
+    allVideos.value = videos;
     video.value = videos.find((v) => v.id === videoId) || null;
     if (video.value) {
       setupWxShare({
@@ -179,6 +213,18 @@ onBeforeUnmount(() => {
     videoEl.value.pause();
     videoEl.value.removeAttribute('src');
     videoEl.value.load();
+  }
+});
+
+watch(() => route.params.id, async (newId) => {
+  if (!newId || !allVideos.value.length) return;
+  saveProgress();
+  const v = allVideos.value.find((v) => v.id === newId);
+  if (v) {
+    video.value = v;
+    copySuccess.value = false;
+    setupWxShare({ title: v.title, description: v.description, image: v.coverUrl });
+    await restoreProgress();
   }
 });
 </script>
@@ -280,5 +326,72 @@ onBeforeUnmount(() => {
   line-height: 2;
   color: var(--ion-text-color);
   white-space: normal;
+}
+
+.related-section {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--ion-color-light-shade);
+}
+
+.related-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ion-color-medium);
+  margin-bottom: 12px;
+}
+
+.related-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: var(--ion-color-light-shade);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.related-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--ion-background-color);
+  cursor: pointer;
+}
+
+.related-item:active {
+  background: var(--ion-color-light);
+}
+
+.related-thumb {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  background: var(--ion-color-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 20px;
+  color: var(--ion-color-primary);
+}
+
+.related-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.related-name {
+  font-size: 14px;
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.related-date {
+  font-size: 12px;
+  color: var(--ion-color-medium);
+  margin-top: 2px;
 }
 </style>
