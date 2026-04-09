@@ -221,8 +221,8 @@ function savePage() {
   }
 }
 
-function restorePage() {
-  if (!book.value) return;
+function restorePage(): number {
+  if (!book.value) return 1;
   const saved = localStorage.getItem(getProgressKey(book.value.id));
   if (saved) {
     const p = parseInt(saved, 10);
@@ -312,9 +312,13 @@ function epubNext() {
 }
 
 .reader-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   display: flex;
   flex-direction: column;
-  height: calc(100% - 1px);
 }
 
 .pdf-controls {
@@ -323,6 +327,8 @@ function epubNext() {
   justify-content: center;
   gap: 12px;
   padding: 8px 16px;
+  flex-shrink: 0;
+  background: var(--ion-background-color);
 }
 
 .page-jump {
@@ -362,34 +368,44 @@ function epubNext() {
 }
 
 .pdf-slider-wrap {
-  padding: 0 16px 6px;
+  padding: 0 16px 8px;
+  flex-shrink: 0;
+  background: var(--ion-background-color);
 }
 
 .pdf-slider {
   width: 100%;
-  height: 4px;
+  height: 28px;
   -webkit-appearance: none;
   appearance: none;
-  background: var(--ion-color-light-shade);
-  border-radius: 2px;
+  background: transparent;
   outline: none;
+}
+
+.pdf-slider::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--ion-color-light-shade);
 }
 
 .pdf-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 18px;
-  height: 18px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   background: var(--ion-color-primary);
   cursor: pointer;
+  margin-top: -9px;
 }
 
 .pdf-viewer {
   flex: 1;
   overflow: auto;
+  -webkit-overflow-scrolling: touch;
   display: flex;
   justify-content: center;
+  align-items: flex-start;
   padding: 8px;
 }
 
