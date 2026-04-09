@@ -170,15 +170,12 @@ async function initPdf() {
   if (!book.value?.fileUrl) return;
   try {
     const pdfjsLib = await import('pdfjs-dist');
-    pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
+    pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+      '/pdf.worker.min.mjs',
+      window.location.origin
+    ).href;
 
-    try {
-      pdfDoc = await pdfjsLib.getDocument(book.value.fileUrl).promise;
-    } catch {
-      // worker 加载失败时回退到主线程渲染
-      pdfjsLib.GlobalWorkerOptions.workerSrc = '';
-      pdfDoc = await pdfjsLib.getDocument(book.value.fileUrl).promise;
-    }
+    pdfDoc = await pdfjsLib.getDocument(book.value.fileUrl).promise;
 
     totalPages.value = pdfDoc.numPages;
     const startPage = restorePage();
