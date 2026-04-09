@@ -28,6 +28,8 @@
             playsinline
             :src="video.videoUrl"
             :poster="video.coverUrl"
+            @timeupdate="onTimeUpdate"
+            @loadedmetadata="restoreProgress"
           />
         </div>
         <div class="video-info">
@@ -82,7 +84,7 @@ const loading = ref(true);
 const video = ref<VideoItem | null>(null);
 const videoEl = ref<HTMLVideoElement | null>(null);
 const copySuccess = ref(false);
-let progressTimer: ReturnType<typeof setInterval> | null = null;
+let saveThrottleTimer = 0;
 
 function getProgressKey(id: string) {
   return `video-progress:${id}`;
@@ -99,6 +101,13 @@ function saveProgress() {
   }
 }
 
+function onTimeUpdate() {
+  const now = Date.now();
+  if (now - saveThrottleTimer < 3000) return;
+  saveThrottleTimer = now;
+  saveProgress();
+}
+
 function restoreProgress() {
   const el = videoEl.value;
   const v = video.value;
@@ -107,6 +116,10 @@ function restoreProgress() {
   if (saved && Number(saved) > 0) {
     el.currentTime = Number(saved);
   }
+}
+
+function onPageHide() {
+  saveProgress();
 }
 
 const formattedLyrics = computed(() => {
@@ -149,10 +162,7 @@ onMounted(async () => {
         description: video.value.description,
         image: video.value.coverUrl,
       });
-      // Restore progress after video element is ready
-      await new Promise((r) => setTimeout(r, 100));
-      restoreProgress();
-      progressTimer = setInterval(saveProgress, 5000);
+      window.addEventListener('pagehide', onPageHide);
     }
   } catch (e) {
     console.error('加载视频详情失败:', e);
@@ -164,7 +174,7 @@ onMounted(async () => {
 onBeforeUnmount(() => {
   resetPageMeta();
   saveProgress();
-  if (progressTimer) clearInterval(progressTimer);
+  window.removeEventListener('pagehide', onPageHide);
   if (videoEl.value) {
     videoEl.value.pause();
     videoEl.value.removeAttribute('src');
