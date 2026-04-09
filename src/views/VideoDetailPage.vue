@@ -82,6 +82,32 @@ const loading = ref(true);
 const video = ref<VideoItem | null>(null);
 const videoEl = ref<HTMLVideoElement | null>(null);
 const copySuccess = ref(false);
+let progressTimer: ReturnType<typeof setInterval> | null = null;
+
+function getProgressKey(id: string) {
+  return `video-progress:${id}`;
+}
+
+function saveProgress() {
+  const el = videoEl.value;
+  const v = video.value;
+  if (!el || !v || !el.duration) return;
+  if (el.currentTime / el.duration > 0.95) {
+    localStorage.removeItem(getProgressKey(v.id));
+  } else {
+    localStorage.setItem(getProgressKey(v.id), String(Math.floor(el.currentTime)));
+  }
+}
+
+function restoreProgress() {
+  const el = videoEl.value;
+  const v = video.value;
+  if (!el || !v) return;
+  const saved = localStorage.getItem(getProgressKey(v.id));
+  if (saved && Number(saved) > 0) {
+    el.currentTime = Number(saved);
+  }
+}
 
 const formattedLyrics = computed(() => {
   if (!video.value?.lyrics) return '';
@@ -123,6 +149,10 @@ onMounted(async () => {
         description: video.value.description,
         image: video.value.coverUrl,
       });
+      // Restore progress after video element is ready
+      await new Promise((r) => setTimeout(r, 100));
+      restoreProgress();
+      progressTimer = setInterval(saveProgress, 5000);
     }
   } catch (e) {
     console.error('加载视频详情失败:', e);
@@ -133,6 +163,8 @@ onMounted(async () => {
 
 onBeforeUnmount(() => {
   resetPageMeta();
+  saveProgress();
+  if (progressTimer) clearInterval(progressTimer);
   if (videoEl.value) {
     videoEl.value.pause();
     videoEl.value.removeAttribute('src');
