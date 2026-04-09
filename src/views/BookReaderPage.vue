@@ -8,7 +8,7 @@
         <ion-title>{{ book?.title || '阅读' }}</ion-title>
       </ion-toolbar>
     </ion-header>
-    <ion-content>
+    <ion-content :scroll-y="isPdf ? false : true">
       <div v-if="loading" class="loading-container">
         <ion-spinner></ion-spinner>
         <p>加载中...</p>
@@ -17,40 +17,46 @@
       <template v-if="book">
         <!-- PDF Reader -->
         <div v-if="book.format === 'pdf' && book.fileUrl" class="reader-container">
-          <div class="pdf-controls">
-            <ion-button size="small" @click="prevPage" :disabled="currentPage <= 1">
-              <ion-icon :icon="arrowBackOutline" slot="icon-only"></ion-icon>
-            </ion-button>
-            <div class="page-jump">
+          <div v-if="pdfError" class="pdf-error">
+            <p>{{ pdfError }}</p>
+            <ion-button size="small" @click="pdfError = ''; initPdf()">重试</ion-button>
+          </div>
+          <template v-else>
+            <div class="pdf-controls">
+              <ion-button size="small" @click="prevPage" :disabled="currentPage <= 1">
+                <ion-icon :icon="arrowBackOutline" slot="icon-only"></ion-icon>
+              </ion-button>
+              <div class="page-jump">
+                <input
+                  type="number"
+                  class="page-input"
+                  :value="currentPage"
+                  :min="1"
+                  :max="totalPages"
+                  @change="jumpToPage($event)"
+                  @keyup.enter="jumpToPage($event)"
+                />
+                <span class="page-sep">/</span>
+                <span class="page-total">{{ totalPages }}</span>
+              </div>
+              <ion-button size="small" @click="nextPage" :disabled="currentPage >= totalPages">
+                <ion-icon :icon="arrowForwardOutline" slot="icon-only"></ion-icon>
+              </ion-button>
+            </div>
+            <div class="pdf-slider-wrap">
               <input
-                type="number"
-                class="page-input"
-                :value="currentPage"
+                type="range"
+                class="pdf-slider"
                 :min="1"
                 :max="totalPages"
-                @change="jumpToPage($event)"
-                @keyup.enter="jumpToPage($event)"
+                :value="currentPage"
+                @input="sliderJump($event)"
               />
-              <span class="page-sep">/</span>
-              <span class="page-total">{{ totalPages }}</span>
             </div>
-            <ion-button size="small" @click="nextPage" :disabled="currentPage >= totalPages">
-              <ion-icon :icon="arrowForwardOutline" slot="icon-only"></ion-icon>
-            </ion-button>
-          </div>
-          <div class="pdf-slider-wrap">
-            <input
-              type="range"
-              class="pdf-slider"
-              :min="1"
-              :max="totalPages"
-              :value="currentPage"
-              @input="sliderJump($event)"
-            />
-          </div>
-          <div class="pdf-viewer" ref="pdfContainer">
-            <canvas ref="pdfCanvas"></canvas>
-          </div>
+            <div class="pdf-viewer" ref="pdfContainer">
+              <canvas ref="pdfCanvas"></canvas>
+            </div>
+          </template>
         </div>
 
         <!-- EPUB Reader -->
@@ -81,7 +87,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, nextTick } from 'vue';
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
 import {
   IonPage,
@@ -104,12 +110,14 @@ import type { BookItem } from '@/types';
 const route = useRoute();
 const loading = ref(true);
 const book = ref<BookItem | null>(null);
+const isPdf = computed(() => book.value?.format === 'pdf');
 
 // PDF state
 const pdfCanvas = ref<HTMLCanvasElement | null>(null);
 const pdfContainer = ref<HTMLDivElement | null>(null);
 const currentPage = ref(1);
 const totalPages = ref(0);
+const pdfError = ref('');
 let pdfDoc: any = null;
 
 // EPUB state
@@ -176,8 +184,9 @@ async function initPdf() {
     const startPage = restorePage();
     currentPage.value = startPage;
     await renderPage(startPage);
-  } catch (e) {
+  } catch (e: any) {
     console.error('PDF 加载失败:', e);
+    pdfError.value = e?.message || 'PDF 加载失败';
   }
 }
 
@@ -312,13 +321,19 @@ function epubNext() {
 }
 
 .reader-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
   display: flex;
   flex-direction: column;
+  height: 100%;
+}
+
+.pdf-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  color: var(--ion-color-danger);
+  gap: 12px;
 }
 
 .pdf-controls {
