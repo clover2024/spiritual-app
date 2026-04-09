@@ -183,7 +183,9 @@ const uncategorizedVideos = computed(() => {
 // 显示的视频列表（文件夹内 或 搜索结果）
 const filteredVideos = computed(() => {
   if (selectedFolder.value) {
-    return videos.value.filter((v) => v.category === selectedFolder.value);
+    return videos.value
+      .filter((v) => v.category === selectedFolder.value)
+      .sort((a, b) => a.title.localeCompare(b.title, 'zh'));
   }
   if (searchQuery.value) {
     const q = searchQuery.value.toLowerCase();
