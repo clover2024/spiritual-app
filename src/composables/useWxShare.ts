@@ -1,7 +1,7 @@
 import { setPageMeta } from './usePageMeta';
 
 const WX_SIGN_URL = import.meta.env.VITE_WX_SIGN_URL || '';
-const SHARE_ICON = 'https://clover-1256096296.cos.ap-shanghai.myqcloud.com/images/share-icon.png';
+const SHARE_ICON = 'https://clover-1313238640.cos.ap-nanjing.myqcloud.com/images/share-icon.png';
 
 interface WxConfig {
   appId: string;

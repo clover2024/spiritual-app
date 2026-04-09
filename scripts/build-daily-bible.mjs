@@ -13,8 +13,8 @@ for (const line of envContent.split('\n')) {
   }
 }
 
-const BUCKET = 'clover-1256096296';
-const REGION = 'ap-shanghai';
+const BUCKET = 'clover-1313238640';
+const REGION = 'ap-nanjing';
 const cos = new COS({ SecretId: process.env.COS_SECRET_ID, SecretKey: process.env.COS_SECRET_KEY });
 
 const MD_DIR = '/Users/clover/ezeo/圣经日日行/downloads/md';

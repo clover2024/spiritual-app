@@ -16,8 +16,8 @@ for (const line of envContent.split('\n')) {
 
 const SECRET_ID = process.env.COS_SECRET_ID;
 const SECRET_KEY = process.env.COS_SECRET_KEY;
-const BUCKET = 'clover-1256096296';
-const REGION = 'ap-shanghai';
+const BUCKET = 'clover-1313238640';
+const REGION = 'ap-nanjing';
 
 if (!SECRET_ID || !SECRET_KEY) {
   console.error('Error: COS_SECRET_ID and COS_SECRET_KEY must be set in .env');
