@@ -40,7 +40,13 @@
             <span v-if="video.date" class="meta-date">{{ video.date }}</span>
           </div>
           <div v-if="video.lyrics" class="lyrics-section">
-            <div class="lyrics-title">歌词</div>
+            <div class="lyrics-header">
+              <div class="lyrics-title">歌词</div>
+              <ion-button fill="clear" size="small" @click="copyLyrics" class="copy-btn">
+                <ion-icon :icon="copyOutline" slot="start" />
+                {{ copySuccess ? '已复制' : '复制歌词' }}
+              </ion-button>
+            </div>
             <div class="lyrics-content" v-html="formattedLyrics"></div>
           </div>
         </div>
@@ -63,8 +69,9 @@ import {
   IonSpinner,
   IonIcon,
   IonBadge,
+  IonButton,
 } from '@ionic/vue';
-import { playCircleOutline } from 'ionicons/icons';
+import { playCircleOutline, copyOutline } from 'ionicons/icons';
 import { getVideos } from '@/services/cos';
 import { setPageMeta, resetPageMeta } from '@/composables/usePageMeta';
 import { setupWxShare } from '@/composables/useWxShare';
@@ -74,6 +81,7 @@ const route = useRoute();
 const loading = ref(true);
 const video = ref<VideoItem | null>(null);
 const videoEl = ref<HTMLVideoElement | null>(null);
+const copySuccess = ref(false);
 
 const formattedLyrics = computed(() => {
   if (!video.value?.lyrics) return '';
@@ -83,6 +91,26 @@ const formattedLyrics = computed(() => {
     .replace(/>/g, '&gt;')
     .replace(/\n/g, '<br>');
 });
+
+async function copyLyrics() {
+  if (!video.value?.lyrics) return;
+  try {
+    await navigator.clipboard.writeText(video.value.lyrics);
+    copySuccess.value = true;
+    setTimeout(() => { copySuccess.value = false; }, 2000);
+  } catch {
+    const ta = document.createElement('textarea');
+    ta.value = video.value!.lyrics;
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    copySuccess.value = true;
+    setTimeout(() => { copySuccess.value = false; }, 2000);
+  }
+}
 
 onMounted(async () => {
   try {
@@ -186,11 +214,23 @@ onBeforeUnmount(() => {
   border-top: 1px solid var(--ion-color-light-shade);
 }
 
+.lyrics-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
 .lyrics-title {
   font-size: 14px;
   font-weight: 600;
   color: var(--ion-color-medium);
-  margin-bottom: 10px;
+}
+
+.copy-btn {
+  --padding-start: 8px;
+  --padding-end: 8px;
+  font-size: 13px;
 }
 
 .lyrics-content {
