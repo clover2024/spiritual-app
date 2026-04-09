@@ -30,7 +30,7 @@ export function resetPageMeta() {
   document.title = DEFAULT_TITLE;
 
   const ogTitle = document.querySelector('meta[property="og:title"]') as HTMLMetaElement;
-  if (ogTitle) ogTitle.content = `${DEFAULT_TITLE} - 属灵资源平台`;
+  if (ogTitle) ogTitle.content = DEFAULT_TITLE;
 
   const ogDesc = document.querySelector('meta[property="og:description"]') as HTMLMetaElement;
   if (ogDesc) ogDesc.content = DEFAULT_DESCRIPTION;
