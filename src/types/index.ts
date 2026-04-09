@@ -7,6 +7,7 @@ export interface VideoItem {
   duration?: string;
   category?: string;
   date?: string;
+  lyrics?: string;
 }
 
 export interface BookItem {

@@ -39,6 +39,10 @@
             </ion-badge>
             <span v-if="video.date" class="meta-date">{{ video.date }}</span>
           </div>
+          <div v-if="video.lyrics" class="lyrics-section">
+            <div class="lyrics-title">歌词</div>
+            <div class="lyrics-content" v-html="formattedLyrics"></div>
+          </div>
         </div>
       </template>
     </ion-content>
@@ -46,7 +50,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useRoute } from 'vue-router';
 import {
   IonPage,
@@ -70,6 +74,15 @@ const route = useRoute();
 const loading = ref(true);
 const video = ref<VideoItem | null>(null);
 const videoEl = ref<HTMLVideoElement | null>(null);
+
+const formattedLyrics = computed(() => {
+  if (!video.value?.lyrics) return '';
+  return video.value.lyrics
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/\n/g, '<br>');
+});
 
 onMounted(async () => {
   try {
@@ -165,5 +178,25 @@ onBeforeUnmount(() => {
 .meta-date {
   font-size: 12px;
   color: var(--ion-color-medium);
+}
+
+.lyrics-section {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--ion-color-light-shade);
+}
+
+.lyrics-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ion-color-medium);
+  margin-bottom: 10px;
+}
+
+.lyrics-content {
+  font-size: 15px;
+  line-height: 2;
+  color: var(--ion-text-color);
+  white-space: normal;
 }
 </style>
