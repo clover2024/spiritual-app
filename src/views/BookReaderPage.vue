@@ -21,10 +21,32 @@
             <ion-button size="small" @click="prevPage" :disabled="currentPage <= 1">
               <ion-icon :icon="arrowBackOutline" slot="icon-only"></ion-icon>
             </ion-button>
-            <span class="page-info">{{ currentPage }} / {{ totalPages }}</span>
+            <div class="page-jump">
+              <input
+                type="number"
+                class="page-input"
+                :value="currentPage"
+                :min="1"
+                :max="totalPages"
+                @change="jumpToPage($event)"
+                @keyup.enter="jumpToPage($event)"
+              />
+              <span class="page-sep">/</span>
+              <span class="page-total">{{ totalPages }}</span>
+            </div>
             <ion-button size="small" @click="nextPage" :disabled="currentPage >= totalPages">
               <ion-icon :icon="arrowForwardOutline" slot="icon-only"></ion-icon>
             </ion-button>
+          </div>
+          <div class="pdf-slider-wrap">
+            <input
+              type="range"
+              class="pdf-slider"
+              :min="1"
+              :max="totalPages"
+              :value="currentPage"
+              @input="sliderJump($event)"
+            />
           </div>
           <div class="pdf-viewer" ref="pdfContainer">
             <canvas ref="pdfCanvas"></canvas>
@@ -122,6 +144,7 @@ onMounted(async () => {
 });
 
 onUnmounted(() => {
+  savePage();
   resetPageMeta();
   if (pdfDoc) {
     pdfDoc.destroy();
@@ -150,8 +173,9 @@ async function initPdf() {
     }
 
     totalPages.value = pdfDoc.numPages;
-    currentPage.value = 1;
-    await renderPage(1);
+    const startPage = restorePage();
+    currentPage.value = startPage;
+    await renderPage(startPage);
   } catch (e) {
     console.error('PDF 加载失败:', e);
   }
@@ -185,10 +209,33 @@ async function renderPage(pageNum: number) {
   }).promise;
 }
 
+function getProgressKey(id: string) {
+  return `pdf-progress:${id}`;
+}
+
+function savePage() {
+  if (book.value && currentPage.value > 0 && currentPage.value < totalPages.value) {
+    localStorage.setItem(getProgressKey(book.value.id), String(currentPage.value));
+  } else if (book.value) {
+    localStorage.removeItem(getProgressKey(book.value.id));
+  }
+}
+
+function restorePage() {
+  if (!book.value) return;
+  const saved = localStorage.getItem(getProgressKey(book.value.id));
+  if (saved) {
+    const p = parseInt(saved, 10);
+    if (p > 1 && p <= totalPages.value) return p;
+  }
+  return 1;
+}
+
 function prevPage() {
   if (currentPage.value > 1) {
     currentPage.value--;
     renderPage(currentPage.value);
+    savePage();
   }
 }
 
@@ -196,6 +243,34 @@ function nextPage() {
   if (currentPage.value < totalPages.value) {
     currentPage.value++;
     renderPage(currentPage.value);
+    savePage();
+  }
+}
+
+function jumpToPage(event: Event) {
+  const input = event.target as HTMLInputElement;
+  const p = parseInt(input.value, 10);
+  if (p >= 1 && p <= totalPages.value) {
+    currentPage.value = p;
+    renderPage(p);
+    savePage();
+  } else {
+    input.value = String(currentPage.value);
+  }
+}
+
+let sliderTimer = 0;
+function sliderJump(event: Event) {
+  const input = event.target as HTMLInputElement;
+  const p = parseInt(input.value, 10);
+  if (p >= 1 && p <= totalPages.value) {
+    currentPage.value = p;
+    // Throttle rendering for slider drag
+    clearTimeout(sliderTimer);
+    sliderTimer = window.setTimeout(() => {
+      renderPage(p);
+      savePage();
+    }, 150);
   }
 }
 
@@ -246,15 +321,68 @@ function epubNext() {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16px;
+  gap: 12px;
   padding: 8px 16px;
-  border-bottom: 1px solid var(--ion-color-light-shade);
 }
 
-.page-info {
+.page-jump {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.page-input {
+  width: 52px;
+  padding: 4px 6px;
+  border: 1px solid var(--ion-color-light-shade);
+  border-radius: 6px;
   font-size: 14px;
-  min-width: 80px;
   text-align: center;
+  background: var(--ion-background-color);
+  color: var(--ion-text-color);
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.page-input::-webkit-inner-spin-button,
+.page-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.page-sep {
+  font-size: 14px;
+  color: var(--ion-color-medium);
+}
+
+.page-total {
+  font-size: 14px;
+  color: var(--ion-color-medium);
+  min-width: 28px;
+}
+
+.pdf-slider-wrap {
+  padding: 0 16px 6px;
+}
+
+.pdf-slider {
+  width: 100%;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--ion-color-light-shade);
+  border-radius: 2px;
+  outline: none;
+}
+
+.pdf-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--ion-color-primary);
+  cursor: pointer;
 }
 
 .pdf-viewer {
