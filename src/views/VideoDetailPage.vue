@@ -110,9 +110,18 @@ let saveThrottleTimer = 0;
 
 const relatedVideos = computed(() => {
   if (!video.value) return [];
-  return allVideos.value
-    .filter((v) => v.category && v.category === video.value!.category && v.id !== video.value!.id)
-    .slice(0, 10);
+  const cat = video.value.category;
+  if (!cat) return [];
+  // Find position of current video in full list
+  const curFullIdx = allVideos.value.findIndex((v) => v.id === video.value!.id);
+  // Get same-category videos excluding current
+  const sameCategory = allVideos.value.filter((v) => v.category === cat && v.id !== video.value!.id);
+  // Count how many same-category videos come before current one
+  const sameBeforeCount = allVideos.value.filter((v, i) => i < curFullIdx && v.category === cat).length;
+  // Prioritize videos after current position, then wrap to beginning
+  const after = sameCategory.slice(sameBeforeCount);
+  const before = sameCategory.slice(0, sameBeforeCount);
+  return [...after, ...before].slice(0, 10);
 });
 
 function goToVideo(id: string) {
