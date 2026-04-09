@@ -3,11 +3,6 @@
     <ion-tabs>
       <ion-router-outlet></ion-router-outlet>
       <ion-tab-bar slot="bottom">
-        <ion-tab-button tab="gospel" href="/tabs/gospel">
-          <ion-icon aria-hidden="true" :icon="documentTextOutline" />
-          <ion-label>福音基站</ion-label>
-        </ion-tab-button>
-
         <ion-tab-button tab="videos" href="/tabs/videos">
           <ion-icon aria-hidden="true" :icon="playCircleOutline" />
           <ion-label>视频</ion-label>
@@ -16,6 +11,11 @@
         <ion-tab-button tab="hymns" href="/tabs/hymns">
           <ion-icon aria-hidden="true" :icon="musicalNotesOutline" />
           <ion-label>诗歌</ion-label>
+        </ion-tab-button>
+
+        <ion-tab-button tab="gospel" href="/tabs/gospel">
+          <ion-icon aria-hidden="true" :icon="documentTextOutline" />
+          <ion-label>福音基站</ion-label>
         </ion-tab-button>
 
         <ion-tab-button tab="books" href="/tabs/books">

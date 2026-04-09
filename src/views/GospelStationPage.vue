@@ -71,7 +71,11 @@ const articles = ref<any[]>([]);
 async function loadData() {
   try {
     const data = await getGospelArticles();
-    articles.value = data.sort((a, b) => a.title.localeCompare(b.title, 'zh'));
+    articles.value = data.sort((a, b) => {
+      const cnNum: Record<string, number> = { '一': 1, '二': 2, '三': 3, '四': 4, '五': 5, '六': 6, '七': 7, '八': 8, '九': 9, '十': 10 };
+      const getNum = (t: string) => { const m = t.match(/[一二三四五六七八九十]/); return m ? (cnNum[m[0]] ?? 99) : 99; };
+      return getNum(a.title) - getNum(b.title) || a.title.localeCompare(b.title, 'zh');
+    });
   } catch (e) {
     console.error('加载文章失败:', e);
   } finally {
@@ -81,7 +85,11 @@ async function loadData() {
 
 function handleRefresh(event: RefresherCustomEvent) {
   getGospelArticles().then((data) => {
-    articles.value = data.sort((a, b) => a.title.localeCompare(b.title, 'zh'));
+    articles.value = data.sort((a, b) => {
+      const cnNum: Record<string, number> = { '一': 1, '二': 2, '三': 3, '四': 4, '五': 5, '六': 6, '七': 7, '八': 8, '九': 9, '十': 10 };
+      const getNum = (t: string) => { const m = t.match(/[一二三四五六七八九十]/); return m ? (cnNum[m[0]] ?? 99) : 99; };
+      return getNum(a.title) - getNum(b.title) || a.title.localeCompare(b.title, 'zh');
+    });
     event.target.complete();
   }).catch(() => {
     event.target.complete();
