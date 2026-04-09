@@ -19,7 +19,7 @@ export function setPageMeta(options: {
 }) {
   const { title, description, image } = options;
 
-  document.title = `${title} - ${DEFAULT_TITLE}`;
+  document.title = title;
 
   getOrCreateMeta('property', 'og:title').content = title;
   getOrCreateMeta('property', 'og:description').content = description || DEFAULT_DESCRIPTION;
