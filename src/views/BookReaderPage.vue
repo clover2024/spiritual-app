@@ -593,6 +593,10 @@ function epubNext() {
   line-height: 1.8;
   font-size: 16px;
   color: var(--ion-text-color);
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  user-select: text;
+  -webkit-touch-callout: default;
 }
 
 .markdown-content :deep(h1) {
