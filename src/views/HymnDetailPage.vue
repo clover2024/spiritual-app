@@ -89,6 +89,7 @@
         <p>未找到该音频</p>
       </div>
     </ion-content>
+    <BottomNav />
   </ion-page>
 </template>
 
@@ -111,6 +112,7 @@ import { musicalNoteOutline } from 'ionicons/icons';
 import { getHymns } from '@/services/cos';
 import { setPageMeta, resetPageMeta } from '@/composables/usePageMeta';
 import { setupWxShare } from '@/composables/useWxShare';
+import BottomNav from '@/components/BottomNav.vue';
 import type { HymnItem } from '@/types';
 
 const route = useRoute();

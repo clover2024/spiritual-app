@@ -86,6 +86,7 @@
         <p>未找到该书报</p>
       </div>
     </ion-content>
+    <BottomNav />
   </ion-page>
 </template>
 
@@ -108,6 +109,7 @@ import { arrowBackOutline, arrowForwardOutline, bookOutline, downloadOutline } f
 import { getBooks } from '@/services/cos';
 import { setPageMeta, resetPageMeta } from '@/composables/usePageMeta';
 import { setupWxShare } from '@/composables/useWxShare';
+import BottomNav from '@/components/BottomNav.vue';
 import type { BookItem } from '@/types';
 
 const route = useRoute();

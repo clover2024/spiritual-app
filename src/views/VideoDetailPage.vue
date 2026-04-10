@@ -74,6 +74,7 @@
         </div>
       </template>
     </ion-content>
+    <BottomNav />
   </ion-page>
 </template>
 
@@ -97,6 +98,7 @@ import { playCircleOutline, copyOutline } from 'ionicons/icons';
 import { getVideos } from '@/services/cos';
 import { setPageMeta, resetPageMeta } from '@/composables/usePageMeta';
 import { setupWxShare } from '@/composables/useWxShare';
+import BottomNav from '@/components/BottomNav.vue';
 import type { VideoItem } from '@/types';
 
 const route = useRoute();

@@ -57,6 +57,7 @@
         <p>未找到该日的读经内容</p>
       </div>
     </ion-content>
+    <BottomNav />
   </ion-page>
 </template>
 
@@ -79,6 +80,7 @@ import { getDailyBible } from '@/services/cos';
 import { marked } from 'marked';
 import { setPageMeta, resetPageMeta } from '@/composables/usePageMeta';
 import { setupWxShare } from '@/composables/useWxShare';
+import BottomNav from '@/components/BottomNav.vue';
 import type { DailyBibleDay } from '@/types';
 
 const route = useRoute();

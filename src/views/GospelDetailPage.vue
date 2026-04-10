@@ -34,6 +34,7 @@
         <p>文章未找到</p>
       </div>
     </ion-content>
+    <BottomNav />
   </ion-page>
 </template>
 
@@ -54,6 +55,7 @@ import { marked } from 'marked';
 import { getGospelArticles } from '@/services/cos';
 import { setPageMeta, resetPageMeta } from '@/composables/usePageMeta';
 import { setupWxShare } from '@/composables/useWxShare';
+import BottomNav from '@/components/BottomNav.vue';
 import type { GospelArticle } from '@/types';
 
 const route = useRoute();
