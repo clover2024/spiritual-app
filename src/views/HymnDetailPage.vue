@@ -34,7 +34,13 @@
               class="audio-player"
               controls
               preload="metadata"
+              playsinline
+              webkit-playsinline
+              x5-playsinline
+              x5-video-player-type="h5"
               :src="hymn.audioUrl"
+              @timeupdate="onTimeUpdate"
+              @loadedmetadata="restoreProgress"
             >
               您的浏览器不支持音频播放
             </audio>
@@ -87,6 +93,8 @@ import type { HymnItem } from '@/types';
 const route = useRoute();
 const loading = ref(true);
 const hymn = ref<HymnItem | null>(null);
+const audioEl = ref<HTMLAudioElement | null>(null);
+let saveThrottleTimer = 0;
 
 const stanzas = computed(() => {
   if (!hymn.value?.lyrics) return [];
@@ -94,6 +102,42 @@ const stanzas = computed(() => {
     .split('\n\n')
     .map((stanza) => stanza.split('\n').filter((l) => l.trim()));
 });
+
+function getProgressKey(id: string) {
+  return `audio-progress:${id}`;
+}
+
+function saveProgress() {
+  const el = audioEl.value;
+  const h = hymn.value;
+  if (!el || !h || !el.duration) return;
+  if (el.currentTime / el.duration > 0.95) {
+    localStorage.removeItem(getProgressKey(h.id));
+  } else {
+    localStorage.setItem(getProgressKey(h.id), String(Math.floor(el.currentTime)));
+  }
+}
+
+function onTimeUpdate() {
+  const now = Date.now();
+  if (now - saveThrottleTimer < 3000) return;
+  saveThrottleTimer = now;
+  saveProgress();
+}
+
+function restoreProgress() {
+  const el = audioEl.value;
+  const h = hymn.value;
+  if (!el || !h) return;
+  const saved = localStorage.getItem(getProgressKey(h.id));
+  if (saved && Number(saved) > 0) {
+    el.currentTime = Number(saved);
+  }
+}
+
+function onPageHide() {
+  saveProgress();
+}
 
 onMounted(async () => {
   try {
@@ -103,6 +147,7 @@ onMounted(async () => {
     if (hymn.value) {
       const desc = hymn.value.author || hymn.value.lyrics?.split('\n')[0] || '';
       setupWxShare({ title: hymn.value.title, description: desc });
+      window.addEventListener('pagehide', onPageHide);
     }
   } catch (e) {
     console.error('加载音频详情失败:', e);
@@ -113,6 +158,13 @@ onMounted(async () => {
 
 onBeforeUnmount(() => {
   resetPageMeta();
+  saveProgress();
+  window.removeEventListener('pagehide', onPageHide);
+  if (audioEl.value) {
+    audioEl.value.pause();
+    audioEl.value.removeAttribute('src');
+    audioEl.value.load();
+  }
 });
 </script>
 
@@ -156,6 +208,7 @@ onBeforeUnmount(() => {
 .audio-player {
   width: 100%;
   border-radius: 8px;
+  outline: none;
 }
 
 .lyrics-section {

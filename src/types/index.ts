@@ -26,7 +26,7 @@ export interface HymnItem {
   title: string;
   author?: string;
   category?: string;
-  lyrics: string;
+  lyrics?: string;
   audioUrl?: string;
   coverUrl?: string;
   date?: string;

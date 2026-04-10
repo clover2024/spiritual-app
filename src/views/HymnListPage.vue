@@ -21,17 +21,21 @@
       </div>
 
       <template v-else>
-        <!-- 面包屑导航（进入文件夹后显示） -->
+        <!-- 面包屑导航 -->
         <div v-if="selectedFolder" class="breadcrumb">
-          <span class="breadcrumb-item" @click="selectedFolder = ''">
+          <span class="breadcrumb-item" @click="selectedFolder = ''; selectedSubFolder = ''">
             <ion-icon :icon="homeOutline" />
             <span>全部音频</span>
           </span>
+          <template v-if="selectedSubFolder">
+            <ion-icon :icon="chevronForwardOutline" class="breadcrumb-sep" />
+            <span class="breadcrumb-item" @click="selectedSubFolder = ''">{{ selectedFolder }}</span>
+          </template>
           <ion-icon :icon="chevronForwardOutline" class="breadcrumb-sep" />
-          <span class="breadcrumb-current">{{ selectedFolder }}</span>
+          <span class="breadcrumb-current">{{ selectedSubFolder || selectedFolder }}</span>
         </div>
 
-        <!-- 文件夹视图（未选中文件夹且无搜索时） -->
+        <!-- 根文件夹视图（未选中文件夹且无搜索时） -->
         <div v-if="!selectedFolder && !searchQuery" class="folder-section">
           <div class="folder-grid">
             <div
@@ -51,7 +55,7 @@
             </div>
           </div>
 
-          <!-- 无分类诗歌 -->
+          <!-- 无分类音频 -->
           <div v-if="uncategorizedHymns.length" class="unclassified-section">
             <div class="section-title">其他音频</div>
             <ion-list lines="none">
@@ -73,7 +77,28 @@
           </div>
         </div>
 
-        <!-- 诗歌列表（选中文件夹 或 搜索中） -->
+        <!-- 子文件夹视图（选中一级文件夹且有子文件夹，且无搜索） -->
+        <div v-else-if="selectedFolder && !selectedSubFolder && subFolders.length && !searchQuery" class="folder-section">
+          <div class="folder-grid">
+            <div
+              v-for="sf in subFolders"
+              :key="sf.name"
+              class="folder-card"
+              @click="selectedSubFolder = sf.name"
+            >
+              <div class="folder-card-icon">
+                <ion-icon :icon="folderOutline" />
+              </div>
+              <div class="folder-card-info">
+                <span class="folder-name">{{ sf.name }}</span>
+                <span class="folder-count">{{ sf.count }} 首</span>
+              </div>
+              <ion-icon :icon="chevronForwardOutline" class="folder-arrow" />
+            </div>
+          </div>
+        </div>
+
+        <!-- 音频列表（子文件夹内 或 搜索中） -->
         <div v-else>
           <div v-if="filteredHymns.length === 0" class="empty-state">
             <ion-icon :icon="musicalNotesOutline" class="empty-icon" />
@@ -145,6 +170,7 @@ const router = useRouter();
 const loading = ref(true);
 const searchQuery = ref('');
 const selectedFolder = ref('');
+const selectedSubFolder = ref('');
 const hymns = ref<HymnItem[]>([]);
 
 // 按 category 分组生成文件夹列表
@@ -165,16 +191,43 @@ const folders = computed(() => {
   );
 });
 
-// 无分类诗歌
+// 无分类音频
 const uncategorizedHymns = computed(() => {
   return hymns.value.filter((h) => !h.category);
 });
 
-// 显示的诗歌列表（文件夹内 或 搜索结果）
-const filteredHymns = computed(() => {
-  if (selectedFolder.value) {
-    return hymns.value.filter((h) => h.category === selectedFolder.value);
+// 从 audioUrl 路径中提取子文件夹
+// 原始路径如 /audios/新约生命读经/01马太福音/Mat-001.mp3
+// resolveUrl 后如 https://xxx.cos.xxx.myqcloud.com/audios/新约生命读经/01马太福音/Mat-001.mp3
+function getSubFolder(audioUrl: string, category: string): string | null {
+  const idx = audioUrl.indexOf('/' + category + '/');
+  if (idx < 0) return null;
+  const after = audioUrl.substring(idx + category.length + 2); // skip /category/
+  const slashIdx = after.indexOf('/');
+  if (slashIdx < 0) return null;
+  const sub = after.substring(0, slashIdx);
+  return sub || null;
+}
+
+const subFolders = computed(() => {
+  if (!selectedFolder.value) return [];
+  const categoryHymns = hymns.value.filter((h) => h.category === selectedFolder.value);
+  const subMap = new Map<string, { name: string; count: number }>();
+  for (const h of categoryHymns) {
+    if (!h.audioUrl) continue;
+    const sub = getSubFolder(h.audioUrl, selectedFolder.value);
+    if (sub) {
+      const existing = subMap.get(sub);
+      if (existing) existing.count++;
+      else subMap.set(sub, { name: sub, count: 1 });
+    }
   }
+  if (subMap.size === 0) return [];
+  return Array.from(subMap.values()).sort((a, b) => a.name.localeCompare(b.name, 'zh-CN'));
+});
+
+// 显示的音频列表（子文件夹内 或 搜索结果）
+const filteredHymns = computed(() => {
   if (searchQuery.value) {
     const q = searchQuery.value.toLowerCase();
     return hymns.value.filter(
@@ -185,10 +238,20 @@ const filteredHymns = computed(() => {
         h.category?.toLowerCase().includes(q)
     );
   }
+  if (selectedFolder.value && selectedSubFolder.value) {
+    return hymns.value.filter((h) => {
+      if (h.category !== selectedFolder.value || !h.audioUrl) return false;
+      return getSubFolder(h.audioUrl, selectedFolder.value) === selectedSubFolder.value;
+    });
+  }
+  if (selectedFolder.value && subFolders.value.length === 0) {
+    return hymns.value.filter((h) => h.category === selectedFolder.value);
+  }
   return [];
 });
 
-function getLyricsPreview(lyrics: string): string {
+function getLyricsPreview(lyrics?: string): string {
+  if (!lyrics) return '';
   const firstLine = lyrics.split('\n').find((l) => l.trim()) || '';
   return firstLine.length > 40 ? firstLine.substring(0, 40) + '...' : firstLine;
 }
