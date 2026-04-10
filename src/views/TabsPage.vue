@@ -10,7 +10,7 @@
 
         <ion-tab-button tab="hymns" href="/tabs/hymns">
           <ion-icon aria-hidden="true" :icon="musicalNotesOutline" />
-          <ion-label>诗歌</ion-label>
+          <ion-label>音频</ion-label>
         </ion-tab-button>
 
         <ion-tab-button tab="gospel" href="/tabs/gospel">

@@ -5,7 +5,7 @@
         <ion-buttons slot="start">
           <ion-back-button default-href="/tabs/hymns" text="返回"></ion-back-button>
         </ion-buttons>
-        <ion-title>{{ hymn?.title || '诗歌' }}</ion-title>
+        <ion-title>{{ hymn?.title || '音频' }}</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content>
@@ -59,7 +59,7 @@
       </template>
 
       <div v-if="!loading && !hymn" class="empty-state">
-        <p>未找到该诗歌</p>
+        <p>未找到该音频</p>
       </div>
     </ion-content>
   </ion-page>
@@ -105,7 +105,7 @@ onMounted(async () => {
       setupWxShare({ title: hymn.value.title, description: desc });
     }
   } catch (e) {
-    console.error('加载诗歌详情失败:', e);
+    console.error('加载音频详情失败:', e);
   } finally {
     loading.value = false;
   }

@@ -2,11 +2,11 @@
   <ion-page>
     <ion-header>
       <ion-toolbar>
-        <ion-title>诗歌</ion-title>
+        <ion-title>音频</ion-title>
       </ion-toolbar>
       <ion-searchbar
         v-model="searchQuery"
-        placeholder="搜索诗歌"
+        placeholder="搜索音频"
         :debounce="300"
       />
     </ion-header>
@@ -25,7 +25,7 @@
         <div v-if="selectedFolder" class="breadcrumb">
           <span class="breadcrumb-item" @click="selectedFolder = ''">
             <ion-icon :icon="homeOutline" />
-            <span>全部诗歌</span>
+            <span>全部音频</span>
           </span>
           <ion-icon :icon="chevronForwardOutline" class="breadcrumb-sep" />
           <span class="breadcrumb-current">{{ selectedFolder }}</span>
@@ -53,7 +53,7 @@
 
           <!-- 无分类诗歌 -->
           <div v-if="uncategorizedHymns.length" class="unclassified-section">
-            <div class="section-title">其他诗歌</div>
+            <div class="section-title">其他音频</div>
             <ion-list lines="none">
               <ion-item
                 v-for="hymn in uncategorizedHymns"
@@ -77,7 +77,7 @@
         <div v-else>
           <div v-if="filteredHymns.length === 0" class="empty-state">
             <ion-icon :icon="musicalNotesOutline" class="empty-icon" />
-            <p>{{ searchQuery ? '未找到匹配的诗歌' : '暂无诗歌内容' }}</p>
+            <p>{{ searchQuery ? '未找到匹配的音频' : '暂无音频内容' }}</p>
           </div>
           <ion-list v-else lines="full">
             <ion-item
@@ -197,7 +197,7 @@ async function loadData() {
   try {
     hymns.value = await getHymns();
   } catch (e) {
-    console.error('加载诗歌失败:', e);
+    console.error('加载音频失败:', e);
   } finally {
     loading.value = false;
   }

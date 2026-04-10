@@ -53,7 +53,7 @@
         <!-- 最新诗歌 -->
         <h2 class="section-title" style="margin-top: 24px;">
           <ion-icon :icon="musicalNotesOutline" class="section-icon"></ion-icon>
-          最新诗歌
+          最新音频
         </h2>
         <ion-list lines="none">
           <ion-item
@@ -74,7 +74,7 @@
           </ion-item>
         </ion-list>
         <ion-button expand="block" fill="outline" router-link="/tabs/hymns">
-          查看全部诗歌
+          查看全部音频
         </ion-button>
 
         <!-- 最新书报 -->
