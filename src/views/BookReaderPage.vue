@@ -704,12 +704,18 @@ function epubNext() {
   right: 0;
   bottom: 0;
   width: min(320px, 80vw);
-  background: var(--ion-background-color);
+  background: #fff;
   z-index: 201;
   display: flex;
   flex-direction: column;
-  box-shadow: -2px 0 12px rgba(0, 0, 0, 0.1);
+  box-shadow: -2px 0 12px rgba(0, 0, 0, 0.15);
   animation: toc-slide-in 0.2s ease-out;
+}
+
+@media (prefers-color-scheme: dark) {
+  .toc-panel {
+    background: #1e1e1e;
+  }
 }
 
 @keyframes toc-slide-in {
@@ -761,11 +767,20 @@ function epubNext() {
   font-weight: 500;
 }
 
+.toc-item.toc-h1 {
+  font-size: 15px;
+  font-weight: 700;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--ion-color-light-shade);
+}
+
 .toc-item.toc-h3 {
   padding-left: 32px;
+  font-size: 13px;
 }
 
 .toc-item.toc-h4 {
   padding-left: 48px;
+  font-size: 13px;
 }
 </style>
