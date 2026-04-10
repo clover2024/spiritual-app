@@ -337,6 +337,10 @@ watch(() => route.params.id, async (newId) => {
   line-height: 2;
   color: var(--ion-text-color);
   white-space: normal;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  user-select: text;
+  -webkit-touch-callout: default;
 }
 
 .related-section {

@@ -296,6 +296,10 @@ watch(() => route.params.id, async (newId) => {
 
 .lyrics-section {
   line-height: 1;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  user-select: text;
+  -webkit-touch-callout: default;
 }
 
 .stanza {
