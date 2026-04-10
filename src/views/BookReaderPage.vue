@@ -42,6 +42,9 @@
               <ion-button size="small" @click="nextPage" :disabled="currentPage >= totalPages">
                 <ion-icon :icon="arrowForwardOutline" slot="icon-only"></ion-icon>
               </ion-button>
+              <ion-button size="small" @click="downloadPdf" class="download-btn">
+                <ion-icon :icon="downloadOutline" slot="icon-only"></ion-icon>
+              </ion-button>
             </div>
             <div class="pdf-slider-wrap">
               <input
@@ -101,7 +104,7 @@ import {
   IonSpinner,
   IonButton,
 } from '@ionic/vue';
-import { arrowBackOutline, arrowForwardOutline, bookOutline } from 'ionicons/icons';
+import { arrowBackOutline, arrowForwardOutline, bookOutline, downloadOutline } from 'ionicons/icons';
 import { getBooks } from '@/services/cos';
 import { setPageMeta, resetPageMeta } from '@/composables/usePageMeta';
 import { setupWxShare } from '@/composables/useWxShare';
@@ -280,6 +283,17 @@ function sliderJump(event: Event) {
   }
 }
 
+function downloadPdf() {
+  if (!book.value?.fileUrl) return;
+  const link = document.createElement('a');
+  link.href = book.value.fileUrl;
+  link.download = (book.value.title || 'document') + '.pdf';
+  link.target = '_blank';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
 // ==================== EPUB ====================
 async function initEpub() {
   if (!book.value?.fileUrl || !epubContainer.value) return;
@@ -341,6 +355,10 @@ function epubNext() {
   padding: 8px 16px;
   flex-shrink: 0;
   background: var(--ion-background-color);
+}
+
+.download-btn {
+  margin-left: auto;
 }
 
 .page-jump {
