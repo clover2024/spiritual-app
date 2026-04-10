@@ -61,6 +61,27 @@
             </div>
           </div>
 
+          <!-- 相关推荐 -->
+          <div v-if="relatedHymns.length" class="related-section">
+            <div class="related-title">相关推荐</div>
+            <div class="related-list">
+              <div
+                v-for="rh in relatedHymns"
+                :key="rh.id"
+                class="related-item"
+                @click="goToHymn(rh.id)"
+              >
+                <div class="related-thumb">
+                  <ion-icon :icon="musicalNoteOutline" />
+                </div>
+                <div class="related-info">
+                  <div class="related-name">{{ rh.title }}</div>
+                  <div v-if="rh.author" class="related-date">{{ rh.author }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </template>
 
@@ -72,8 +93,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
-import { useRoute } from 'vue-router';
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import {
   IonPage,
   IonHeader,
@@ -84,15 +105,19 @@ import {
   IonBackButton,
   IonBadge,
   IonSpinner,
+  IonIcon,
 } from '@ionic/vue';
+import { musicalNoteOutline } from 'ionicons/icons';
 import { getHymns } from '@/services/cos';
 import { setPageMeta, resetPageMeta } from '@/composables/usePageMeta';
 import { setupWxShare } from '@/composables/useWxShare';
 import type { HymnItem } from '@/types';
 
 const route = useRoute();
+const router = useRouter();
 const loading = ref(true);
 const hymn = ref<HymnItem | null>(null);
+const allHymns = ref<HymnItem[]>([]);
 const audioEl = ref<HTMLAudioElement | null>(null);
 let saveThrottleTimer = 0;
 
@@ -102,6 +127,50 @@ const stanzas = computed(() => {
     .split('\n\n')
     .map((stanza) => stanza.split('\n').filter((l) => l.trim()));
 });
+
+function getSubFolder(audioUrl: string, category: string): string | null {
+  const idx = audioUrl.indexOf('/' + category + '/');
+  if (idx < 0) return null;
+  const after = audioUrl.substring(idx + category.length + 2);
+  const slashIdx = after.indexOf('/');
+  if (slashIdx < 0) return null;
+  return after.substring(0, slashIdx) || null;
+}
+
+const relatedHymns = computed(() => {
+  if (!hymn.value) return [];
+  const cat = hymn.value.category;
+  if (!cat) return [];
+
+  const curSub = hymn.value.audioUrl ? getSubFolder(hymn.value.audioUrl, cat) : null;
+  const curFullIdx = allHymns.value.findIndex((h) => h.id === hymn.value!.id);
+
+  // Prioritize same sub-folder, then same category
+  let sameGroup: HymnItem[];
+  if (curSub) {
+    sameGroup = allHymns.value.filter((h) =>
+      h.id !== hymn.value!.id &&
+      h.category === cat &&
+      h.audioUrl &&
+      getSubFolder(h.audioUrl, cat) === curSub
+    );
+  } else {
+    sameGroup = allHymns.value.filter((h) =>
+      h.id !== hymn.value!.id && h.category === cat
+    );
+  }
+
+  const sameBeforeCount = allHymns.value.filter(
+    (h, i) => i < curFullIdx && h.category === cat && h.id !== hymn.value!.id
+  ).length;
+  const after = sameGroup.slice(sameBeforeCount);
+  const before = sameGroup.slice(0, sameBeforeCount);
+  return [...after, ...before].slice(0, 10);
+});
+
+function goToHymn(id: string) {
+  router.push(`/hymn/${id}`);
+}
 
 function getProgressKey(id: string) {
   return `audio-progress:${id}`;
@@ -141,9 +210,10 @@ function onPageHide() {
 
 onMounted(async () => {
   try {
-    const allHymns = await getHymns();
+    const hymns = await getHymns();
+    allHymns.value = hymns;
     const id = route.params.id as string;
-    hymn.value = allHymns.find((h) => h.id === id) || null;
+    hymn.value = hymns.find((h) => h.id === id) || null;
     if (hymn.value) {
       const desc = hymn.value.author || hymn.value.lyrics?.split('\n')[0] || '';
       setupWxShare({ title: hymn.value.title, description: desc });
@@ -164,6 +234,17 @@ onBeforeUnmount(() => {
     audioEl.value.pause();
     audioEl.value.removeAttribute('src');
     audioEl.value.load();
+  }
+});
+
+watch(() => route.params.id, async (newId) => {
+  if (!newId || !allHymns.value.length) return;
+  saveProgress();
+  const h = allHymns.value.find((h) => h.id === newId);
+  if (h) {
+    hymn.value = h;
+    const desc = h.author || h.lyrics?.split('\n')[0] || '';
+    setupWxShare({ title: h.title, description: desc });
   }
 });
 </script>
@@ -225,6 +306,73 @@ onBeforeUnmount(() => {
   text-align: center;
   margin: 0;
   white-space: pre-wrap;
+}
+
+.related-section {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--ion-color-light-shade);
+}
+
+.related-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ion-color-medium);
+  margin-bottom: 12px;
+}
+
+.related-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: var(--ion-color-light-shade);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.related-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--ion-background-color);
+  cursor: pointer;
+}
+
+.related-item:active {
+  background: var(--ion-color-light);
+}
+
+.related-thumb {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  background: var(--ion-color-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 20px;
+  color: var(--ion-color-tertiary);
+}
+
+.related-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.related-name {
+  font-size: 14px;
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.related-date {
+  font-size: 12px;
+  color: var(--ion-color-medium);
+  margin-top: 2px;
 }
 
 .empty-state {
