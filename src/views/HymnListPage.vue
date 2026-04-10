@@ -226,6 +226,12 @@ const subFolders = computed(() => {
   return Array.from(subMap.values()).sort((a, b) => a.name.localeCompare(b.name, 'zh-CN'));
 });
 
+// 从标题中提取篇号用于排序（如 "创世记 第001篇" → 1）
+function getEpisodeNum(title: string): number {
+  const m = title.match(/第(\d+)篇/);
+  return m ? parseInt(m[1], 10) : 0;
+}
+
 // 显示的音频列表（子文件夹内 或 搜索结果）
 const filteredHymns = computed(() => {
   if (searchQuery.value) {
@@ -239,13 +245,17 @@ const filteredHymns = computed(() => {
     );
   }
   if (selectedFolder.value && selectedSubFolder.value) {
-    return hymns.value.filter((h) => {
-      if (h.category !== selectedFolder.value || !h.audioUrl) return false;
-      return getSubFolder(h.audioUrl, selectedFolder.value) === selectedSubFolder.value;
-    });
+    return hymns.value
+      .filter((h) => {
+        if (h.category !== selectedFolder.value || !h.audioUrl) return false;
+        return getSubFolder(h.audioUrl, selectedFolder.value) === selectedSubFolder.value;
+      })
+      .sort((a, b) => getEpisodeNum(a.title) - getEpisodeNum(b.title));
   }
   if (selectedFolder.value && subFolders.value.length === 0) {
-    return hymns.value.filter((h) => h.category === selectedFolder.value);
+    return hymns.value
+      .filter((h) => h.category === selectedFolder.value)
+      .sort((a, b) => getEpisodeNum(a.title) - getEpisodeNum(b.title));
   }
   return [];
 });
