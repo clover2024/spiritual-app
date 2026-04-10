@@ -62,6 +62,47 @@
           </template>
         </div>
 
+        <!-- Markdown Reader -->
+        <div v-if="book.format === 'markdown' && book.fileUrl" class="markdown-container ion-padding">
+          <div v-if="mdLoading" class="md-loading">
+            <ion-spinner></ion-spinner>
+            <p>加载中...</p>
+          </div>
+          <div v-else-if="mdError" class="md-error">
+            <p>{{ mdError }}</p>
+            <ion-button size="small" @click="mdError = ''; initMarkdown()">重试</ion-button>
+          </div>
+          <template v-else-if="mdHtml">
+            <div class="markdown-content" ref="mdContentEl" v-html="mdHtml"></div>
+            <!-- TOC floating button -->
+            <div
+              v-if="tocItems.length > 0"
+              class="toc-fab"
+              @click="showToc = !showToc"
+            >
+              <ion-icon :icon="listOutline" />
+            </div>
+            <!-- TOC overlay -->
+            <div v-if="showToc" class="toc-overlay" @click="showToc = false"></div>
+            <!-- TOC panel -->
+            <div v-if="showToc" class="toc-panel">
+              <div class="toc-header">
+                <span>目录</span>
+                <ion-icon :icon="closeOutline" class="toc-close" @click="showToc = false" />
+              </div>
+              <div class="toc-list">
+                <div
+                  v-for="(item, idx) in tocItems"
+                  :key="idx"
+                  class="toc-item"
+                  :class="'toc-h' + item.level, { 'toc-active': activeTocId === item.id }"
+                  @click="scrollToHeading(item.id)"
+                >{{ item.text }}</div>
+              </div>
+            </div>
+          </template>
+        </div>
+
         <!-- EPUB Reader -->
         <div v-if="book.format === 'epub' && book.fileUrl" class="epub-container">
           <div class="epub-controls">
@@ -105,7 +146,8 @@ import {
   IonSpinner,
   IonButton,
 } from '@ionic/vue';
-import { arrowBackOutline, arrowForwardOutline, bookOutline, downloadOutline } from 'ionicons/icons';
+import { arrowBackOutline, arrowForwardOutline, bookOutline, downloadOutline, listOutline, closeOutline } from 'ionicons/icons';
+import { marked } from 'marked';
 import { getBooks } from '@/services/cos';
 import { setPageMeta, resetPageMeta } from '@/composables/usePageMeta';
 import { setupWxShare } from '@/composables/useWxShare';
@@ -130,6 +172,42 @@ const epubContainer = ref<HTMLDivElement | null>(null);
 let epubBook: any = null;
 let epubRendition: any = null;
 
+// Markdown state
+const mdLoading = ref(false);
+const mdError = ref('');
+const mdHtml = ref('');
+const mdContentEl = ref<HTMLDivElement | null>(null);
+const showToc = ref(false);
+const activeTocId = ref('');
+
+interface TocItem {
+  id: string;
+  text: string;
+  level: number;
+}
+const tocItems = ref<TocItem[]>([]);
+
+// Configure marked renderer to add ids to headings
+const mdRenderer = new marked.Renderer();
+let tocCounter = 0;
+mdRenderer.heading = function (data: { text: string; depth: number }) {
+  const id = 'md-h-' + tocCounter++;
+  tocItems.value.push({ id, text: data.text, level: data.depth });
+  return `<h${data.depth} id="${id}">${data.text}</h${data.depth}>`;
+};
+marked.use({ renderer: mdRenderer });
+
+function scrollToHeading(id: string) {
+  showToc.value = false;
+  activeTocId.value = id;
+  nextTick(() => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+}
+
 onMounted(async () => {
   try {
     const books = await getBooks();
@@ -147,6 +225,8 @@ onMounted(async () => {
         await initPdf();
       } else if (book.value.format === 'epub') {
         await initEpub();
+      } else if (book.value.format === 'markdown') {
+        await initMarkdown();
       }
     }
   } catch (e) {
@@ -294,6 +374,26 @@ function downloadPdf() {
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
+}
+
+// ==================== Markdown ====================
+async function initMarkdown() {
+  if (!book.value?.fileUrl) return;
+  mdLoading.value = true;
+  mdError.value = '';
+  tocItems.value = [];
+  tocCounter = 0;
+  try {
+    const resp = await fetch(book.value.fileUrl);
+    if (!resp.ok) throw new Error('加载失败');
+    const text = await resp.text();
+    mdHtml.value = await marked.parse(text);
+  } catch (e: any) {
+    console.error('Markdown 加载失败:', e);
+    mdError.value = e?.message || '内容加载失败';
+  } finally {
+    mdLoading.value = false;
+  }
 }
 
 // ==================== EPUB ====================
@@ -465,6 +565,90 @@ function epubNext() {
   overflow: hidden;
 }
 
+.markdown-container {
+  min-height: 100%;
+}
+
+.md-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 120px;
+  gap: 12px;
+  color: var(--ion-color-medium);
+}
+
+.md-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 120px;
+  color: var(--ion-color-danger);
+  gap: 12px;
+}
+
+.markdown-content {
+  line-height: 1.8;
+  font-size: 16px;
+  color: var(--ion-text-color);
+}
+
+.markdown-content :deep(h1) {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 24px 0 12px;
+}
+
+.markdown-content :deep(h2) {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 20px 0 10px;
+}
+
+.markdown-content :deep(h3) {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 16px 0 8px;
+}
+
+.markdown-content :deep(p) {
+  margin-bottom: 12px;
+}
+
+.markdown-content :deep(blockquote) {
+  border-left: 4px solid var(--ion-color-primary);
+  margin: 12px 0;
+  padding: 8px 16px;
+  background: var(--ion-color-light);
+  border-radius: 4px;
+}
+
+.markdown-content :deep(ul),
+.markdown-content :deep(ol) {
+  margin: 8px 0;
+  padding-left: 24px;
+}
+
+.markdown-content :deep(li) {
+  margin-bottom: 4px;
+}
+
+.markdown-content :deep(strong) {
+  font-weight: 700;
+}
+
+.markdown-content :deep(em) {
+  font-style: italic;
+}
+
+.markdown-content :deep(hr) {
+  border: none;
+  border-top: 1px solid var(--ion-color-light-shade);
+  margin: 20px 0;
+}
+
 .empty-state {
   display: flex;
   flex-direction: column;
@@ -477,5 +661,111 @@ function epubNext() {
 .empty-icon {
   font-size: 48px;
   margin-bottom: 12px;
+}
+
+/* TOC floating button */
+.toc-fab {
+  position: fixed;
+  right: 16px;
+  bottom: 80px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--ion-color-primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  z-index: 100;
+}
+
+.toc-fab:active {
+  opacity: 0.8;
+}
+
+/* TOC overlay */
+.toc-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 200;
+}
+
+/* TOC panel */
+.toc-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(320px, 80vw);
+  background: var(--ion-background-color);
+  z-index: 201;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -2px 0 12px rgba(0, 0, 0, 0.1);
+  animation: toc-slide-in 0.2s ease-out;
+}
+
+@keyframes toc-slide-in {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+.toc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  font-size: 16px;
+  font-weight: 600;
+  border-bottom: 1px solid var(--ion-color-light-shade);
+  flex-shrink: 0;
+}
+
+.toc-close {
+  font-size: 22px;
+  color: var(--ion-color-medium);
+  cursor: pointer;
+}
+
+.toc-list {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 8px 0;
+}
+
+.toc-item {
+  padding: 10px 16px;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--ion-text-color);
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.toc-item:active {
+  background: var(--ion-color-light);
+}
+
+.toc-item.toc-active {
+  color: var(--ion-color-primary);
+  font-weight: 500;
+}
+
+.toc-item.toc-h3 {
+  padding-left: 32px;
+}
+
+.toc-item.toc-h4 {
+  padding-left: 48px;
 }
 </style>

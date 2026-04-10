@@ -17,7 +17,7 @@ export interface BookItem {
   description?: string;
   coverUrl?: string;
   fileUrl: string;
-  format: 'pdf' | 'epub';
+  format: 'pdf' | 'epub' | 'markdown';
   date?: string;
 }
 

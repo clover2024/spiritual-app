@@ -121,7 +121,9 @@ async function main() {
 
     if (fileType === 'book') {
       if (!manifest.books) manifest.books = [];
-      const bookEntry = { id, title, fileUrl: cosKey, format: ext.replace('.', '') || 'pdf', date: today };
+      const rawExt = ext.replace('.', '') || 'pdf';
+      const formatMap = { md: 'markdown' };
+      const bookEntry = { id, title, fileUrl: cosKey, format: formatMap[rawExt] || rawExt, date: today };
       if (customAuthor) bookEntry.author = customAuthor;
       manifest.books.push(bookEntry);
       console.log(`Added book: ${title}`);
