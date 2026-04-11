@@ -27,7 +27,7 @@
     "epubjs": "^0.3.93",
     "ionicons": "^7.0.0",
     "marked": "^17.0.5",
-    "pdfjs-dist": "^4.10.38",
+    "pdfjs-dist": "^3.11.174",
     "vue": "^3.3.0",
     "vue-router": "^4.6.4"
   },

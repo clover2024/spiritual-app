@@ -254,10 +254,10 @@ onUnmounted(() => {
 async function initPdf() {
   if (!book.value?.fileUrl) return;
   try {
-    const pdfjsLib = await import('pdfjs-dist/legacy/build/pdf.min.mjs');
+    const pdfjsLib = await import('pdfjs-dist/legacy/build/pdf.min.js');
     pdfjsLib.GlobalWorkerOptions.workerSrc = '';
 
-    pdfDoc = await pdfjsLib.getDocument({ url: book.value.fileUrl, useWorkerFetch: false }).promise;
+    pdfDoc = await pdfjsLib.getDocument(book.value.fileUrl).promise;
 
     totalPages.value = pdfDoc.numPages;
     const startPage = restorePage();
