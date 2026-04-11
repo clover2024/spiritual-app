@@ -29,6 +29,16 @@
 
           <!-- 音频播放器 -->
           <div v-if="hymn.audioUrl" class="audio-section">
+            <!-- 版本切换 -->
+            <div v-if="hymn.audioVersions && hymn.audioVersions.length > 1" class="version-tabs">
+              <button
+                v-for="v in hymn.audioVersions"
+                :key="v.label"
+                class="version-tab"
+                :class="{ active: currentAudioUrl === v.url }"
+                @click="switchVersion(v.url)"
+              >{{ v.label }}</button>
+            </div>
             <audio
               ref="audioEl"
               class="audio-player"
@@ -38,7 +48,7 @@
               webkit-playsinline
               x5-playsinline
               x5-video-player-type="h5"
-              :src="hymn.audioUrl"
+              :src="currentAudioUrl"
               @timeupdate="onTimeUpdate"
               @loadedmetadata="restoreProgress"
             >
@@ -94,7 +104,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue';
+import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import {
   IonPage,
@@ -121,7 +131,24 @@ const loading = ref(true);
 const hymn = ref<HymnItem | null>(null);
 const allHymns = ref<HymnItem[]>([]);
 const audioEl = ref<HTMLAudioElement | null>(null);
+const currentAudioUrl = ref('');
 let saveThrottleTimer = 0;
+
+function switchVersion(url: string) {
+  if (currentAudioUrl.value === url) return;
+  const el = audioEl.value;
+  let resumeTime = 0;
+  if (el) {
+    resumeTime = el.currentTime;
+    el.pause();
+  }
+  currentAudioUrl.value = url;
+  if (el && resumeTime > 0) {
+    nextTick(() => {
+      el.currentTime = resumeTime;
+    });
+  }
+}
 
 const stanzas = computed(() => {
   if (!hymn.value?.lyrics) return [];
@@ -217,6 +244,7 @@ onMounted(async () => {
     const id = route.params.id as string;
     hymn.value = hymns.find((h) => h.id === id) || null;
     if (hymn.value) {
+      currentAudioUrl.value = hymn.value.audioUrl || '';
       const desc = hymn.value.author || hymn.value.lyrics?.split('\n')[0] || '';
       setupWxShare({ title: hymn.value.title, description: desc });
       window.addEventListener('pagehide', onPageHide);
@@ -245,6 +273,7 @@ watch(() => route.params.id, async (newId) => {
   const h = allHymns.value.find((h) => h.id === newId);
   if (h) {
     hymn.value = h;
+    currentAudioUrl.value = h.audioUrl || '';
     const desc = h.author || h.lyrics?.split('\n')[0] || '';
     setupWxShare({ title: h.title, description: desc });
   }
@@ -286,6 +315,29 @@ watch(() => route.params.id, async (newId) => {
 
 .audio-section {
   margin-bottom: 24px;
+}
+
+.version-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.version-tab {
+  padding: 6px 16px;
+  border: 1px solid var(--ion-color-light-shade);
+  border-radius: 20px;
+  background: var(--ion-background-color);
+  color: var(--ion-color-medium);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.version-tab.active {
+  background: var(--ion-color-primary);
+  color: #fff;
+  border-color: var(--ion-color-primary);
 }
 
 .audio-player {

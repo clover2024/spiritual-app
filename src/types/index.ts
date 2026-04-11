@@ -21,6 +21,11 @@ export interface BookItem {
   date?: string;
 }
 
+export interface AudioVersion {
+  label: string;
+  url: string;
+}
+
 export interface HymnItem {
   id: string;
   title: string;
@@ -28,6 +33,7 @@ export interface HymnItem {
   category?: string;
   lyrics?: string;
   audioUrl?: string;
+  audioVersions?: AudioVersion[];
   coverUrl?: string;
   date?: string;
 }
