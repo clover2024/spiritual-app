@@ -10,7 +10,10 @@ export default defineConfig({
   base: './',
   plugins: [
     vue(),
-    legacy()
+    legacy({
+      targets: ['Android >= 4', 'iOS >= 9'],
+      renderModernChunks: false,
+    })
   ],
   resolve: {
     alias: {
