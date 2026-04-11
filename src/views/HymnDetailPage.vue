@@ -245,6 +245,7 @@ onMounted(async () => {
     hymn.value = hymns.find((h) => h.id === id) || null;
     if (hymn.value) {
       currentAudioUrl.value = hymn.value.audioUrl || '';
+      console.log('[DEBUG] hymn loaded:', hymn.value.id, 'audioUrl:', hymn.value.audioUrl, 'audioVersions:', JSON.stringify(hymn.value.audioVersions));
       const desc = hymn.value.author || hymn.value.lyrics?.split('\n')[0] || '';
       setupWxShare({ title: hymn.value.title, description: desc });
       window.addEventListener('pagehide', onPageHide);
