@@ -50,6 +50,9 @@ export async function fetchManifest(): Promise<Manifest> {
     manifest.hymns?.forEach(h => {
       h.audioUrl = resolveUrl(h.audioUrl, baseUrl);
       h.coverUrl = resolveUrl(h.coverUrl, baseUrl);
+      h.audioVersions?.forEach(v => {
+        v.url = resolveUrl(v.url, baseUrl) || '';
+      });
     });
     manifest.gospelArticles?.forEach(g => {
       g.contentUrl = resolveUrl(g.contentUrl, baseUrl) || '';
