@@ -74,6 +74,7 @@
                 v-for="(line, lineIndex) in stanza"
                 :key="lineIndex"
                 class="lyrics-line"
+                :class="{ 'lyrics-verse-num': lineIndex === 0 && isVerseNum(line) }"
               >{{ line }}</p>
             </div>
           </div>
@@ -164,6 +165,10 @@ const stanzas = computed(() => {
     .split('\n\n')
     .map((stanza) => stanza.split('\n').filter((l) => l.trim()));
 });
+
+function isVerseNum(line: string): boolean {
+  return /^[一二三四五六七八九十]+$/.test(line.trim());
+}
 
 function getSubFolder(audioUrl: string, category: string): string | null {
   const idx = audioUrl.indexOf('/' + category + '/');
@@ -405,6 +410,12 @@ watch(() => route.params.id, async (newId) => {
   text-align: center;
   margin: 0;
   white-space: pre-wrap;
+}
+
+.lyrics-verse-num {
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 2px;
 }
 
 .related-section {
