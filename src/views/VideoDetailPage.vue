@@ -114,15 +114,14 @@ const relatedVideos = computed(() => {
   if (!video.value) return [];
   const cat = video.value.category;
   if (!cat) return [];
-  // Find position of current video in full list
-  const curFullIdx = allVideos.value.findIndex((v) => v.id === video.value!.id);
-  // Get same-category videos excluding current
-  const sameCategory = allVideos.value.filter((v) => v.category === cat && v.id !== video.value!.id);
-  // Count how many same-category videos come before current one
-  const sameBeforeCount = allVideos.value.filter((v, i) => i < curFullIdx && v.category === cat).length;
-  // Prioritize videos after current position, then wrap to beginning
-  const after = sameCategory.slice(sameBeforeCount);
-  const before = sameCategory.slice(0, sameBeforeCount);
+  // Build same-category list (preserving original order) including current item
+  const groupWithCurrent = allVideos.value.filter((v) => v.category === cat);
+  // Find current item's position within the group
+  const curIdx = groupWithCurrent.findIndex((v) => v.id === video.value!.id);
+  const sameCategory = groupWithCurrent.filter((v) => v.id !== video.value!.id);
+  // Show items after current position first, then wrap to beginning
+  const after = sameCategory.slice(curIdx);
+  const before = sameCategory.slice(0, curIdx);
   return [...after, ...before].slice(0, 10);
 });
 

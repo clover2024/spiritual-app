@@ -172,28 +172,26 @@ const relatedHymns = computed(() => {
   if (!cat) return [];
 
   const curSub = hymn.value.audioUrl ? getSubFolder(hymn.value.audioUrl, cat) : null;
-  const curFullIdx = allHymns.value.findIndex((h) => h.id === hymn.value!.id);
 
-  // Prioritize same sub-folder, then same category
-  let sameGroup: HymnItem[];
+  // Build same-group list (preserving original order) including current item
+  let groupWithCurrent: HymnItem[];
   if (curSub) {
-    sameGroup = allHymns.value.filter((h) =>
-      h.id !== hymn.value!.id &&
+    groupWithCurrent = allHymns.value.filter((h) =>
       h.category === cat &&
       h.audioUrl &&
       getSubFolder(h.audioUrl, cat) === curSub
     );
   } else {
-    sameGroup = allHymns.value.filter((h) =>
-      h.id !== hymn.value!.id && h.category === cat
-    );
+    groupWithCurrent = allHymns.value.filter((h) => h.category === cat);
   }
 
-  const sameBeforeCount = allHymns.value.filter(
-    (h, i) => i < curFullIdx && h.category === cat && h.id !== hymn.value!.id
-  ).length;
-  const after = sameGroup.slice(sameBeforeCount);
-  const before = sameGroup.slice(0, sameBeforeCount);
+  // Find current item's position within the group
+  const curIdx = groupWithCurrent.findIndex((h) => h.id === hymn.value!.id);
+  const sameGroup = groupWithCurrent.filter((h) => h.id !== hymn.value!.id);
+
+  // Show items after current position first, then wrap to beginning
+  const after = sameGroup.slice(curIdx);
+  const before = sameGroup.slice(0, curIdx);
   return [...after, ...before].slice(0, 10);
 });
 
