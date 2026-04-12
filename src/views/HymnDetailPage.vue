@@ -49,7 +49,7 @@
               ref="audioEl"
               class="audio-player"
               controls
-              preload="metadata"
+              preload="auto"
               playsinline
               webkit-playsinline
               x5-playsinline
@@ -57,6 +57,7 @@
               :src="currentAudioUrl"
               @timeupdate="onTimeUpdate"
               @loadedmetadata="onLoadedMetadata"
+              @canplay="onCanPlay"
               @ended="onAudioEnded"
             >
               您的浏览器不支持音频播放
@@ -246,16 +247,18 @@ function onTimeUpdate() {
 function onLoadedMetadata() {
   const el = audioEl.value;
   const h = hymn.value;
-  if (!el || !h) return;
-  if (_pendingAutoPlay) {
-    _pendingAutoPlay = false;
-    setTimeout(() => { el.play().catch(() => {}); }, 100);
-    return;
-  }
+  if (!el || !h || _pendingAutoPlay) return;
   const saved = localStorage.getItem(getProgressKey(h.id));
   if (saved && Number(saved) > 0) {
     el.currentTime = Number(saved);
   }
+}
+
+function onCanPlay() {
+  if (!_pendingAutoPlay) return;
+  _pendingAutoPlay = false;
+  const el = audioEl.value;
+  if (el) el.play().catch(() => {});
 }
 
 function onPageHide() {
