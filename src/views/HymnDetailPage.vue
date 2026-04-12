@@ -262,18 +262,38 @@ function onLoadedMetadata() {
 }
 
 function playAudio(el: HTMLAudioElement) {
+  if (el.duration === 0) {
+    setTimeout(() => playAudio(el), 100);
+    return;
+  }
+  
+  const tryPlay = () => {
+    el.play().then(() => {
+      console.log('Audio played successfully');
+    }).catch((err) => {
+      console.log('Play failed, retrying:', err);
+      setTimeout(tryPlay, 200);
+    });
+  };
+  
   if (typeof window !== 'undefined' && (window as any).WeixinJSBridge) {
     (window as any).WeixinJSBridge.invoke('getNetworkType', {}, () => {
-      el.play().catch(() => {});
+      tryPlay();
     });
   } else if (typeof document !== 'undefined' && document.addEventListener) {
-    document.addEventListener('WeixinJSBridgeReady', () => {
+    const handleReady = () => {
+      document.removeEventListener('WeixinJSBridgeReady', handleReady);
       (window as any).WeixinJSBridge.invoke('getNetworkType', {}, () => {
-        el.play().catch(() => {});
+        tryPlay();
       });
-    }, false);
+    };
+    document.addEventListener('WeixinJSBridgeReady', handleReady, false);
+    setTimeout(() => {
+      document.removeEventListener('WeixinJSBridgeReady', handleReady);
+      tryPlay();
+    }, 3000);
   } else {
-    el.play().catch(() => {});
+    tryPlay();
   }
 }
 
