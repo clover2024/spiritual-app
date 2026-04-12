@@ -54,7 +54,6 @@
               webkit-playsinline
               x5-playsinline
               x5-video-player-type="h5"
-              :autoplay="autoStart"
               :src="currentAudioUrl"
               @timeupdate="onTimeUpdate"
               @loadedmetadata="onLoadedMetadata"
@@ -115,7 +114,6 @@
 <script lang="ts">
 // Module-level: persists across component instances (Ionic re-creates on route change)
 let _autoPlayNext = false;
-let _pendingAutoPlay = false;
 </script>
 
 <script setup lang="ts">
@@ -148,9 +146,6 @@ const allHymns = ref<HymnItem[]>([]);
 const audioEl = ref<HTMLAudioElement | null>(null);
 const currentAudioUrl = ref('');
 const autoPlayNext = ref(_autoPlayNext);
-const autoStart = ref(_pendingAutoPlay);
-if (_pendingAutoPlay) _pendingAutoPlay = false;
-let isFirstLoad = true;
 let saveThrottleTimer = 0;
 
 // Sync ref → module-level so next instance reads the latest value
@@ -255,46 +250,6 @@ function onLoadedMetadata() {
   if (saved && Number(saved) > 0) {
     el.currentTime = Number(saved);
   }
-  if (autoStart.value) {
-    playAudio(el);
-    autoStart.value = false;
-  }
-}
-
-function playAudio(el: HTMLAudioElement) {
-  if (el.duration === 0) {
-    setTimeout(() => playAudio(el), 100);
-    return;
-  }
-  
-  const tryPlay = () => {
-    el.play().then(() => {
-      console.log('Audio played successfully');
-    }).catch((err) => {
-      console.log('Play failed, retrying:', err);
-      setTimeout(tryPlay, 200);
-    });
-  };
-  
-  if (typeof window !== 'undefined' && (window as any).WeixinJSBridge) {
-    (window as any).WeixinJSBridge.invoke('getNetworkType', {}, () => {
-      tryPlay();
-    });
-  } else if (typeof document !== 'undefined' && document.addEventListener) {
-    const handleReady = () => {
-      document.removeEventListener('WeixinJSBridgeReady', handleReady);
-      (window as any).WeixinJSBridge.invoke('getNetworkType', {}, () => {
-        tryPlay();
-      });
-    };
-    document.addEventListener('WeixinJSBridgeReady', handleReady, false);
-    setTimeout(() => {
-      document.removeEventListener('WeixinJSBridgeReady', handleReady);
-      tryPlay();
-    }, 3000);
-  } else {
-    tryPlay();
-  }
 }
 
 function onPageHide() {
@@ -305,10 +260,21 @@ function onAudioEnded() {
   if (!autoPlayNext.value || !hymn.value) return;
   saveProgress();
   const next = relatedHymns.value[0];
-  if (next) {
-    _pendingAutoPlay = true;
-    goToHymn(next.id);
-  }
+  if (!next) return;
+  const h = allHymns.value.find((item) => item.id === next.id);
+  if (!h) return;
+  // Switch data in-place without navigating (avoids WeChat autoplay block)
+  hymn.value = h;
+  currentAudioUrl.value = h.audioUrl || '';
+  const desc = h.author || h.lyrics?.split('\n')[0] || '';
+  setupWxShare({ title: h.title, description: desc });
+  // Update URL without page change
+  history.replaceState(null, '', `#/hymn/${h.id}`);
+  // Play on same audio element — same user gesture chain, WeChat allows it
+  nextTick(() => {
+    const el = audioEl.value;
+    if (el) el.play().catch(() => {});
+  });
 }
 
 onMounted(async () => {
@@ -327,7 +293,6 @@ onMounted(async () => {
     console.error('加载音频详情失败:', e);
   } finally {
     loading.value = false;
-    isFirstLoad = false;
   }
 });
 
