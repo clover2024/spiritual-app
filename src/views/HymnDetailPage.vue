@@ -256,8 +256,24 @@ function onLoadedMetadata() {
     el.currentTime = Number(saved);
   }
   if (autoStart.value) {
-    el.play().catch(() => {});
+    playAudio(el);
     autoStart.value = false;
+  }
+}
+
+function playAudio(el: HTMLAudioElement) {
+  if (typeof window !== 'undefined' && (window as any).WeixinJSBridge) {
+    (window as any).WeixinJSBridge.invoke('getNetworkType', {}, () => {
+      el.play().catch(() => {});
+    });
+  } else if (typeof document !== 'undefined' && document.addEventListener) {
+    document.addEventListener('WeixinJSBridgeReady', () => {
+      (window as any).WeixinJSBridge.invoke('getNetworkType', {}, () => {
+        el.play().catch(() => {});
+      });
+    }, false);
+  } else {
+    el.play().catch(() => {});
   }
 }
 
