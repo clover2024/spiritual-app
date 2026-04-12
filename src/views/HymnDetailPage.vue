@@ -150,6 +150,7 @@ const currentAudioUrl = ref('');
 const autoPlayNext = ref(_autoPlayNext);
 const autoStart = ref(_pendingAutoPlay);
 if (_pendingAutoPlay) _pendingAutoPlay = false;
+let isFirstLoad = true;
 let saveThrottleTimer = 0;
 
 // Sync ref → module-level so next instance reads the latest value
@@ -249,10 +250,14 @@ function onTimeUpdate() {
 function onLoadedMetadata() {
   const el = audioEl.value;
   const h = hymn.value;
-  if (!el || !h || autoStart.value) return;
+  if (!el || !h) return;
   const saved = localStorage.getItem(getProgressKey(h.id));
   if (saved && Number(saved) > 0) {
     el.currentTime = Number(saved);
+  }
+  if (autoStart.value) {
+    el.play().catch(() => {});
+    autoStart.value = false;
   }
 }
 
@@ -286,6 +291,7 @@ onMounted(async () => {
     console.error('加载音频详情失败:', e);
   } finally {
     loading.value = false;
+    isFirstLoad = false;
   }
 });
 
@@ -303,6 +309,10 @@ onBeforeUnmount(() => {
 watch(() => route.params.id, async (newId) => {
   if (!newId || !allHymns.value.length) return;
   saveProgress();
+  if (audioEl.value) {
+    audioEl.value.pause();
+    audioEl.value.currentTime = 0;
+  }
   const h = allHymns.value.find((h) => h.id === newId);
   if (h) {
     hymn.value = h;
