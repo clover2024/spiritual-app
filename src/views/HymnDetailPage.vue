@@ -54,10 +54,10 @@
               webkit-playsinline
               x5-playsinline
               x5-video-player-type="h5"
+              :autoplay="autoStart"
               :src="currentAudioUrl"
               @timeupdate="onTimeUpdate"
               @loadedmetadata="onLoadedMetadata"
-              @canplay="onCanPlay"
               @ended="onAudioEnded"
             >
               您的浏览器不支持音频播放
@@ -148,6 +148,8 @@ const allHymns = ref<HymnItem[]>([]);
 const audioEl = ref<HTMLAudioElement | null>(null);
 const currentAudioUrl = ref('');
 const autoPlayNext = ref(_autoPlayNext);
+const autoStart = ref(_pendingAutoPlay);
+if (_pendingAutoPlay) _pendingAutoPlay = false;
 let saveThrottleTimer = 0;
 
 // Sync ref → module-level so next instance reads the latest value
@@ -247,18 +249,11 @@ function onTimeUpdate() {
 function onLoadedMetadata() {
   const el = audioEl.value;
   const h = hymn.value;
-  if (!el || !h || _pendingAutoPlay) return;
+  if (!el || !h || autoStart.value) return;
   const saved = localStorage.getItem(getProgressKey(h.id));
   if (saved && Number(saved) > 0) {
     el.currentTime = Number(saved);
   }
-}
-
-function onCanPlay() {
-  if (!_pendingAutoPlay) return;
-  _pendingAutoPlay = false;
-  const el = audioEl.value;
-  if (el) el.play().catch(() => {});
 }
 
 function onPageHide() {
