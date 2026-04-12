@@ -19,7 +19,7 @@ npm-debug.log*
 
 # Environment variables
 .env
-
+/.tmp*
 /.idea
 /.ionic
 /.sass-cache
