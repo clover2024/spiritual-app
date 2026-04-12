@@ -216,6 +216,10 @@ onBeforeUnmount(() => {
   line-height: 1.8;
   font-size: 16px;
   color: var(--ion-color-medium-shade);
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  user-select: text;
+  -webkit-touch-callout: default;
 }
 
 .content-section :deep(h1) {

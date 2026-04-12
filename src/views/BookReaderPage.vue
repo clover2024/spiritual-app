@@ -255,8 +255,10 @@ async function initPdf() {
   if (!book.value?.fileUrl) return;
   try {
     const pdfjsLib = await import('pdfjs-dist/legacy/build/pdf.min.js');
-    const pdfWorker = await import('pdfjs-dist/build/pdf.worker.min.js?url');
-    pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker.default;
+    pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+      '/pdf.worker.min.js',
+      window.location.origin
+    ).href;
 
     pdfDoc = await pdfjsLib.getDocument(book.value.fileUrl).promise;
 

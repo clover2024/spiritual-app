@@ -141,6 +141,10 @@ onBeforeUnmount(() => {
 .article-content {
   line-height: 1.8;
   font-size: 16px;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  user-select: text;
+  -webkit-touch-callout: default;
 }
 
 .article-content :deep(strong) {
