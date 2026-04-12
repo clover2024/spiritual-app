@@ -39,6 +39,12 @@
                 @click="switchVersion(v.url)"
               >{{ v.label }}</button>
             </div>
+            <div class="audio-controls-bar">
+              <button class="autoplay-toggle" :class="{ active: autoPlayNext }" @click="autoPlayNext = !autoPlayNext">
+                <ion-icon :icon="playSkipForwardOutline" />
+                <span>{{ autoPlayNext ? '连播开' : '连播关' }}</span>
+              </button>
+            </div>
             <audio
               ref="audioEl"
               class="audio-player"
@@ -51,6 +57,7 @@
               :src="currentAudioUrl"
               @timeupdate="onTimeUpdate"
               @loadedmetadata="restoreProgress"
+              @ended="onAudioEnded"
             >
               您的浏览器不支持音频播放
             </audio>
@@ -118,7 +125,7 @@ import {
   IonSpinner,
   IonIcon,
 } from '@ionic/vue';
-import { musicalNoteOutline } from 'ionicons/icons';
+import { musicalNoteOutline, playSkipForwardOutline } from 'ionicons/icons';
 import { getHymns } from '@/services/cos';
 import { setPageMeta, resetPageMeta } from '@/composables/usePageMeta';
 import { setupWxShare } from '@/composables/useWxShare';
@@ -132,6 +139,7 @@ const hymn = ref<HymnItem | null>(null);
 const allHymns = ref<HymnItem[]>([]);
 const audioEl = ref<HTMLAudioElement | null>(null);
 const currentAudioUrl = ref('');
+const autoPlayNext = ref(false);
 let saveThrottleTimer = 0;
 
 function switchVersion(url: string) {
@@ -235,6 +243,15 @@ function onPageHide() {
   saveProgress();
 }
 
+function onAudioEnded() {
+  if (!autoPlayNext.value || !hymn.value) return;
+  saveProgress();
+  const next = relatedHymns.value[0];
+  if (next) {
+    goToHymn(next.id);
+  }
+}
+
 onMounted(async () => {
   try {
     const hymns = await getHymns();
@@ -243,7 +260,6 @@ onMounted(async () => {
     hymn.value = hymns.find((h) => h.id === id) || null;
     if (hymn.value) {
       currentAudioUrl.value = hymn.value.audioUrl || '';
-      console.log('[DEBUG] hymn loaded:', hymn.value.id, 'audioUrl:', hymn.value.audioUrl, 'audioVersions:', JSON.stringify(hymn.value.audioVersions));
       const desc = hymn.value.author || hymn.value.lyrics?.split('\n')[0] || '';
       setupWxShare({ title: hymn.value.title, description: desc });
       window.addEventListener('pagehide', onPageHide);
@@ -337,6 +353,32 @@ watch(() => route.params.id, async (newId) => {
   background: var(--ion-color-primary);
   color: #fff;
   border-color: var(--ion-color-primary);
+}
+
+.audio-controls-bar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+}
+
+.autoplay-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border: 1px solid var(--ion-color-light-shade);
+  border-radius: 16px;
+  background: var(--ion-background-color);
+  color: var(--ion-color-medium);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.autoplay-toggle.active {
+  background: var(--ion-color-tertiary);
+  color: #fff;
+  border-color: var(--ion-color-tertiary);
 }
 
 .audio-player {
