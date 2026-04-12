@@ -72,6 +72,9 @@ function extractLyrics(html, title) {
   // Fix nested <p><p>...</p> by replacing <p><p> with <p>
   raw = raw.replace(/<p>\s*<p>/g, '<p>');
 
+  // Fix unclosed <p> tags at end (e.g. "<p>lyrics+meta," without </p>)
+  raw = raw.replace(/<p>([^<]+)$/gm, '<p>$1</p>');
+
   // Extract text from <p> tags
   const lines = [];
   const pRegex = /<p>([\s\S]*?)<\/p>/g;
