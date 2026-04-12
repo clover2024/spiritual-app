@@ -111,6 +111,12 @@
   </ion-page>
 </template>
 
+<script lang="ts">
+// Module-level: persists across component instances (Ionic re-creates on route change)
+let _autoPlayNext = false;
+let _pendingAutoPlay = false;
+</script>
+
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -140,9 +146,11 @@ const hymn = ref<HymnItem | null>(null);
 const allHymns = ref<HymnItem[]>([]);
 const audioEl = ref<HTMLAudioElement | null>(null);
 const currentAudioUrl = ref('');
-const autoPlayNext = ref(false);
+const autoPlayNext = ref(_autoPlayNext);
 let saveThrottleTimer = 0;
-let pendingAutoPlay = false;
+
+// Sync ref → module-level so next instance reads the latest value
+watch(autoPlayNext, (v) => { _autoPlayNext = v; });
 
 function switchVersion(url: string) {
   if (currentAudioUrl.value === url) return;
@@ -239,9 +247,9 @@ function onLoadedMetadata() {
   const el = audioEl.value;
   const h = hymn.value;
   if (!el || !h) return;
-  if (pendingAutoPlay) {
-    pendingAutoPlay = false;
-    el.play().catch(() => {});
+  if (_pendingAutoPlay) {
+    _pendingAutoPlay = false;
+    setTimeout(() => { el.play().catch(() => {}); }, 100);
     return;
   }
   const saved = localStorage.getItem(getProgressKey(h.id));
@@ -259,7 +267,7 @@ function onAudioEnded() {
   saveProgress();
   const next = relatedHymns.value[0];
   if (next) {
-    pendingAutoPlay = true;
+    _pendingAutoPlay = true;
     goToHymn(next.id);
   }
 }
