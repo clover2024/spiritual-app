@@ -173,6 +173,18 @@ const selectedFolder = ref('');
 const selectedSubFolder = ref('');
 const hymns = ref<HymnItem[]>([]);
 
+// 中文数字映射，用于排序含中文数字前缀的文件夹名
+const cnNumMap: Record<string, number> = {
+  '一': 1, '二': 2, '三': 3, '四': 4, '五': 5,
+  '六': 6, '七': 7, '八': 8, '九': 9, '十': 10,
+  '十一': 11, '十二': 12, '十三': 13, '十四': 14, '十五': 15,
+};
+function getCnNumOrder(name: string): number {
+  const m = name.match(/^([一二三四五六七八九十]+)、/);
+  if (m && cnNumMap[m[1]]) return cnNumMap[m[1]];
+  return 999;
+}
+
 // 按 category 分组生成文件夹列表
 const folders = computed(() => {
   const folderMap = new Map<string, { name: string; count: number }>();
@@ -186,9 +198,12 @@ const folders = computed(() => {
       }
     }
   });
-  return Array.from(folderMap.values()).sort((a, b) =>
-    a.name.localeCompare(b.name)
-  );
+  return Array.from(folderMap.values()).sort((a, b) => {
+    const oa = getCnNumOrder(a.name);
+    const ob = getCnNumOrder(b.name);
+    if (oa !== ob) return oa - ob;
+    return a.name.localeCompare(b.name, 'zh-CN');
+  });
 });
 
 // 无分类音频
@@ -223,13 +238,20 @@ const subFolders = computed(() => {
     }
   }
   if (subMap.size === 0) return [];
-  return Array.from(subMap.values()).sort((a, b) => a.name.localeCompare(b.name, 'zh-CN'));
+  return Array.from(subMap.values()).sort((a, b) => {
+    const oa = getCnNumOrder(a.name);
+    const ob = getCnNumOrder(b.name);
+    if (oa !== ob) return oa - ob;
+    return a.name.localeCompare(b.name, 'zh-CN');
+  });
 });
 
-// 从标题中提取篇号用于排序（如 "创世记 第001篇" → 1）
+// 从标题中提取编号用于排序（如 "001荣耀荣耀归于父神" → 1, "创世记 第001篇" → 1）
 function getEpisodeNum(title: string): number {
-  const m = title.match(/第(\d+)篇/);
-  return m ? parseInt(m[1], 10) : 0;
+  const m1 = title.match(/^(\d+)/);
+  if (m1) return parseInt(m1[1], 10);
+  const m2 = title.match(/第(\d+)篇/);
+  return m2 ? parseInt(m2[1], 10) : 0;
 }
 
 // 显示的音频列表（子文件夹内 或 搜索结果）
