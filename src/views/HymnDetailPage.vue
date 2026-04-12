@@ -56,7 +56,7 @@
               x5-video-player-type="h5"
               :src="currentAudioUrl"
               @timeupdate="onTimeUpdate"
-              @loadedmetadata="restoreProgress"
+              @loadedmetadata="onLoadedMetadata"
               @ended="onAudioEnded"
             >
               您的浏览器不支持音频播放
@@ -142,6 +142,7 @@ const audioEl = ref<HTMLAudioElement | null>(null);
 const currentAudioUrl = ref('');
 const autoPlayNext = ref(false);
 let saveThrottleTimer = 0;
+let pendingAutoPlay = false;
 
 function switchVersion(url: string) {
   if (currentAudioUrl.value === url) return;
@@ -234,10 +235,15 @@ function onTimeUpdate() {
   saveProgress();
 }
 
-function restoreProgress() {
+function onLoadedMetadata() {
   const el = audioEl.value;
   const h = hymn.value;
   if (!el || !h) return;
+  if (pendingAutoPlay) {
+    pendingAutoPlay = false;
+    el.play().catch(() => {});
+    return;
+  }
   const saved = localStorage.getItem(getProgressKey(h.id));
   if (saved && Number(saved) > 0) {
     el.currentTime = Number(saved);
@@ -253,6 +259,7 @@ function onAudioEnded() {
   saveProgress();
   const next = relatedHymns.value[0];
   if (next) {
+    pendingAutoPlay = true;
     goToHymn(next.id);
   }
 }
