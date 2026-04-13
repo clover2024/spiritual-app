@@ -201,13 +201,14 @@ const stanzas = computed(() => {
     // Skip credit lines like "词：..." or "曲：..."
     if (/^[词曲]/.test(line) && (line.includes('：') || line.includes(':'))) continue;
     if (isLikelyVerseNum(line, lastVerseNum) && current.length) {
-      const n = cnNumMap[line.trim()];
-      if (n !== undefined) lastVerseNum = n;
       result.push(current);
       current = [line];
     } else {
       current.push(line);
     }
+    // Always update lastVerseNum so next verse detection is accurate
+    const vn = cnNumMap[line.trim()];
+    if (vn !== undefined) lastVerseNum = vn;
   }
   if (current.length) result.push(current);
   return result;
