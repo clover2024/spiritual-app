@@ -167,15 +167,40 @@ function switchVersion(url: string) {
   }
 }
 
+const verseStartRe = /^([一二三四五六七八九十百]+|（副）|副$|[A-Z]-\d+)/;
+
 const stanzas = computed(() => {
   if (!hymn.value?.lyrics) return [];
-  return hymn.value.lyrics
-    .split('\n\n')
-    .map((stanza) => stanza.split('\n').filter((l) => l.trim()));
+  let lyrics = hymn.value.lyrics;
+  // Scraped lyrics (lifesongs.cn) use \n\n as line separator (no single \n).
+  // Normalize: if there are no single \n between double \n\n, collapse \n\n → \n
+  const hasSingleNewline = /[^\n]\n[^\n]/.test(lyrics);
+  if (!hasSingleNewline) {
+    lyrics = lyrics.replace(/\n\n+/g, '\n');
+  }
+  // Split into lines, then group by verse markers
+  const lines = lyrics.split('\n').map((l) => l.trim()).filter((l) => l);
+  const result: string[][] = [];
+  let current: string[] = [];
+  for (const line of lines) {
+    // Skip header lines like "B-1", "A-2" etc.
+    if (/^[A-Z]-\d+$/.test(line)) continue;
+    // Skip credit lines like "词：..." or "曲：..."
+    if (/^[词曲]/.test(line) && (line.includes('：') || line.includes(':'))) continue;
+    if (verseStartRe.test(line) && current.length) {
+      result.push(current);
+      current = [line];
+    } else {
+      current.push(line);
+    }
+  }
+  if (current.length) result.push(current);
+  return result;
 });
 
 function isVerseNum(line: string): boolean {
-  return /^[一二三四五六七八九十]+$/.test(line.trim());
+  const t = line.trim();
+  return /^[一二三四五六七八九十]+$/.test(t) || t === '副' || t === '（副）';
 }
 
 function getSubFolder(audioUrl: string, category: string): string | null {
