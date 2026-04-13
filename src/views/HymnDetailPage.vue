@@ -167,7 +167,19 @@ function switchVersion(url: string) {
   }
 }
 
-const verseStartRe = /^([一二三四五六七八九十百]+|（副）|副$|[A-Z]-\d+)/;
+const cnNumMap: Record<string, number> = {
+  '一': 1, '二': 2, '三': 3, '四': 4, '五': 5,
+  '六': 6, '七': 7, '八': 8, '九': 9, '十': 10,
+};
+
+function isLikelyVerseNum(line: string, lastVerseNum: number): boolean {
+  const t = line.trim();
+  if (t === '副' || t === '（副）') return true;
+  const n = cnNumMap[t];
+  if (n === undefined) return false;
+  // Accept if it's the first verse (一) or follows the expected sequence
+  return n === 1 || n === lastVerseNum + 1;
+}
 
 const stanzas = computed(() => {
   if (!hymn.value?.lyrics) return [];
@@ -182,12 +194,15 @@ const stanzas = computed(() => {
   const lines = lyrics.split('\n').map((l) => l.trim()).filter((l) => l);
   const result: string[][] = [];
   let current: string[] = [];
+  let lastVerseNum = 0;
   for (const line of lines) {
     // Skip header lines like "B-1", "A-2" etc.
     if (/^[A-Z]-\d+$/.test(line)) continue;
     // Skip credit lines like "词：..." or "曲：..."
     if (/^[词曲]/.test(line) && (line.includes('：') || line.includes(':'))) continue;
-    if (verseStartRe.test(line) && current.length) {
+    if (isLikelyVerseNum(line, lastVerseNum) && current.length) {
+      const n = cnNumMap[line.trim()];
+      if (n !== undefined) lastVerseNum = n;
       result.push(current);
       current = [line];
     } else {
