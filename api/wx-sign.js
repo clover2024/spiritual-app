@@ -1,7 +1,7 @@
 import { createHash } from 'crypto';
 
-const APPID = 'wx4c9e3b7aa337c691';
-const APPSECRET = '7a721c79effe4082dfb185b21c159e8c';
+const APPID = process.env.WX_APPID || '';
+const APPSECRET = process.env.WX_APPSECRET || '';
 
 let tokenCache = { value: '', expire: 0 };
 let ticketCache = { value: '', expire: 0 };

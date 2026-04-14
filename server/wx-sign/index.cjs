@@ -1,9 +1,9 @@
 const crypto = require('crypto');
 const http = require('http');
 
-// 微信公众号配置
-const APPID = 'wx4c9e3b7aa337c691';
-const APPSECRET = '7a721c79effe4082dfb185b21c159e8c';
+// 微信公众号配置（从环境变量读取）
+const APPID = process.env.WX_APPID || '';
+const APPSECRET = process.env.WX_APPSECRET || '';
 const PORT = process.env.PORT || 3000;
 
 // 缓存
