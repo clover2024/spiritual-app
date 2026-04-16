@@ -29,7 +29,6 @@
               <h3>{{ folder.name }}</h3>
               <p class="count-text">{{ folder.count }} 篇文章</p>
             </ion-label>
-            <ion-icon :icon="chevronForwardOutline" slot="end"></ion-icon>
           </ion-item>
         </ion-list>
 
@@ -60,7 +59,7 @@ import {
   IonRefresherContent,
   RefresherCustomEvent,
 } from '@ionic/vue';
-import { folderOutline, chevronForwardOutline } from 'ionicons/icons';
+import { folderOutline } from 'ionicons/icons';
 import { getGospelArticles } from '@/services/cos';
 
 const router = useRouter();
