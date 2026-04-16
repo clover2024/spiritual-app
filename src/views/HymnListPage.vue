@@ -54,7 +54,7 @@
             </div>
             <div class="folder-card-info">
               <span class="folder-name">生命诗歌</span>
-              <span class="folder-count">789 首 · 12 分类</span>
+              <span class="folder-count">790 首 · 12 分类</span>
             </div>
             <ion-icon :icon="chevronForwardOutline" class="folder-arrow" />
           </div>
