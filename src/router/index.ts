@@ -39,6 +39,10 @@ const routes: Array<RouteRecordRaw> = [
         path: 'gospel',
         component: () => import('@/views/GospelStationPage.vue'),
       },
+      {
+        path: 'life-study',
+        component: () => import('@/views/LifeStudyPage.vue'),
+      },
     ],
   },
   {
@@ -64,6 +68,10 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/wzs/:id',
     component: () => import('@/views/GospelDetailPage.vue'),
+  },
+  {
+    path: '/life-study/:id',
+    component: () => import('@/views/LifeStudyDetailPage.vue'),
   },
 ];
 

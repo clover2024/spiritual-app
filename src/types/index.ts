@@ -70,6 +70,21 @@ export interface GospelFolder {
   description?: string;
 }
 
+export interface LifeStudyFolder {
+  id: string;
+  name: string;
+  description?: string;
+}
+
+export interface LifeStudyItem {
+  id: string;
+  title: string;
+  folder: string;
+  book: string;
+  audioUrl: string;
+  date?: string;
+}
+
 export interface Manifest {
   videos?: VideoItem[];
   books?: BookItem[];

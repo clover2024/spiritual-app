@@ -1,4 +1,4 @@
-import type { Manifest, VideoItem, BookItem, HymnItem, DailyBibleMonth, GospelArticle, GospelFolder } from '@/types';
+import type { Manifest, VideoItem, BookItem, HymnItem, DailyBibleMonth, GospelArticle, GospelFolder, LifeStudyItem, LifeStudyFolder } from '@/types';
 
 const COS_BASE_URL = import.meta.env.VITE_COS_BASE_URL || '';
 const MANIFEST_PATH = '/manifest.json';
@@ -115,6 +115,43 @@ export async function getGospelArticles(): Promise<GospelArticle[]> {
 export async function getGospelFolders(): Promise<GospelFolder[]> {
   if (!cachedGospelFolders) await getGospelArticles();
   return cachedGospelFolders || [];
+}
+
+let cachedLifeStudyItems: LifeStudyItem[] | null = null;
+let cachedLifeStudyFolders: LifeStudyFolder[] | null = null;
+let lifeStudyCacheTimestamp = 0;
+const LIFE_STUDY_CACHE_TTL = 5 * 60 * 1000;
+
+export async function getLifeStudyItems(): Promise<LifeStudyItem[]> {
+  const now = Date.now();
+  if (cachedLifeStudyItems && (now - lifeStudyCacheTimestamp) < LIFE_STUDY_CACHE_TTL) {
+    return cachedLifeStudyItems;
+  }
+
+  const baseUrl = getBaseUrl();
+  if (!baseUrl) return [];
+
+  try {
+    const response = await fetch(`${baseUrl}/life-study/life-study-manifest.json?t=${now}`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    const items: LifeStudyItem[] = data.items || [];
+    items.forEach(item => {
+      item.audioUrl = resolveUrl(item.audioUrl, baseUrl) || '';
+    });
+    cachedLifeStudyItems = items;
+    cachedLifeStudyFolders = data.folders || [];
+    lifeStudyCacheTimestamp = now;
+    return items;
+  } catch (error) {
+    console.error('获取生命读经 manifest 失败:', error);
+    return [];
+  }
+}
+
+export async function getLifeStudyFolders(): Promise<LifeStudyFolder[]> {
+  if (!cachedLifeStudyFolders) await getLifeStudyItems();
+  return cachedLifeStudyFolders || [];
 }
 
 let cachedDailyBible: DailyBibleMonth[] | null = null;

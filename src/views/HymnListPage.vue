@@ -37,6 +37,17 @@
 
         <!-- 根文件夹视图（未选中文件夹且无搜索时） -->
         <div v-if="!selectedFolder && !searchQuery" class="folder-section">
+          <!-- 生命读经入口 -->
+          <div class="life-study-entry" @click="router.push('/tabs/life-study')">
+            <div class="folder-card-icon">
+              <ion-icon :icon="bookOutline" />
+            </div>
+            <div class="folder-card-info">
+              <span class="folder-name">生命读经</span>
+              <span class="folder-count">新约 · 旧约</span>
+            </div>
+            <ion-icon :icon="chevronForwardOutline" class="folder-arrow" />
+          </div>
           <div class="folder-grid">
             <div
               v-for="folder in folders"
@@ -162,6 +173,7 @@ import {
   folderOutline,
   homeOutline,
   chevronForwardOutline,
+  bookOutline,
 } from 'ionicons/icons';
 import { getHymns } from '@/services/cos';
 import type { HymnItem } from '@/types';
@@ -461,5 +473,19 @@ onMounted(loadData);
 .empty-icon {
   font-size: 48px;
   margin-bottom: 12px;
+}
+
+.life-study-entry {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: background 0.15s;
+  border-bottom: 1px solid var(--ion-color-light-shade);
+  background: rgba(var(--ion-color-primary-rgb), 0.03);
+}
+
+.life-study-entry:hover {
+  background: rgba(var(--ion-color-primary-rgb), 0.08);
 }
 </style>
