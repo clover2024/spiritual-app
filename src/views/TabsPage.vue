@@ -15,7 +15,7 @@
 
         <ion-tab-button tab="gospel" href="/tabs/gospel">
           <ion-icon aria-hidden="true" :icon="documentTextOutline" />
-          <ion-label>福音基站</ion-label>
+          <ion-label>文字室</ion-label>
         </ion-tab-button>
 
         <ion-tab-button tab="books" href="/tabs/books">

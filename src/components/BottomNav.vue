@@ -12,7 +12,7 @@
         </a>
         <a class="nav-item" @click="go('/tabs/gospel')">
           <ion-icon :icon="documentTextOutline" />
-          <span>福音基站</span>
+          <span>文字室</span>
         </a>
         <a class="nav-item" @click="go('/tabs/books')">
           <ion-icon :icon="bookOutline" />
