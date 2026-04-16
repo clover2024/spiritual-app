@@ -29,16 +29,6 @@
 
           <!-- 音频播放器 -->
           <div v-if="hymn.audioUrl" class="audio-section">
-            <!-- 版本切换 -->
-            <div v-if="hymn.audioVersions && hymn.audioVersions.length > 1" class="version-tabs">
-              <button
-                v-for="v in hymn.audioVersions"
-                :key="v.label"
-                class="version-tab"
-                :class="{ active: currentAudioUrl === v.url }"
-                @click="switchVersion(v.url)"
-              >{{ v.label }}</button>
-            </div>
             <div class="audio-controls-bar">
               <button class="autoplay-toggle" :class="{ active: autoPlayNext }" @click="autoPlayNext = !autoPlayNext">
                 <ion-icon :icon="playSkipForwardOutline" />
@@ -132,17 +122,17 @@ import {
   IonIcon,
 } from '@ionic/vue';
 import { musicalNoteOutline, playSkipForwardOutline } from 'ionicons/icons';
-import { getHymns } from '@/services/cos';
+import { getLifesongs } from '@/services/cos';
 import { setPageMeta, resetPageMeta } from '@/composables/usePageMeta';
 import { setupWxShare } from '@/composables/useWxShare';
 import BottomNav from '@/components/BottomNav.vue';
-import type { HymnItem } from '@/types';
+import type { LifesongItem } from '@/types';
 
 const route = useRoute();
 const router = useRouter();
 const loading = ref(true);
-const hymn = ref<HymnItem | null>(null);
-const allHymns = ref<HymnItem[]>([]);
+const hymn = ref<LifesongItem | null>(null);
+const allHymns = ref<LifesongItem[]>([]);
 const audioEl = ref<HTMLAudioElement | null>(null);
 const currentAudioUrl = ref('');
 const autoPlayNext = ref(_autoPlayNext);
@@ -150,22 +140,6 @@ let saveThrottleTimer = 0;
 
 // Sync ref → module-level so next instance reads the latest value
 watch(autoPlayNext, (v) => { _autoPlayNext = v; });
-
-function switchVersion(url: string) {
-  if (currentAudioUrl.value === url) return;
-  const el = audioEl.value;
-  let resumeTime = 0;
-  if (el) {
-    resumeTime = el.currentTime;
-    el.pause();
-  }
-  currentAudioUrl.value = url;
-  if (el && resumeTime > 0) {
-    nextTick(() => {
-      el.currentTime = resumeTime;
-    });
-  }
-}
 
 const cnNumMap: Record<string, number> = {
   '一': 1, '二': 2, '三': 3, '四': 4, '五': 5,
@@ -219,33 +193,13 @@ function isVerseNum(line: string): boolean {
   return /^[一二三四五六七八九十]+$/.test(t) || t === '副' || t === '（副）';
 }
 
-function getSubFolder(audioUrl: string, category: string): string | null {
-  const idx = audioUrl.indexOf('/' + category + '/');
-  if (idx < 0) return null;
-  const after = audioUrl.substring(idx + category.length + 2);
-  const slashIdx = after.indexOf('/');
-  if (slashIdx < 0) return null;
-  return after.substring(0, slashIdx) || null;
-}
-
 const relatedHymns = computed(() => {
   if (!hymn.value) return [];
   const cat = hymn.value.category;
   if (!cat) return [];
 
-  const curSub = hymn.value.audioUrl ? getSubFolder(hymn.value.audioUrl, cat) : null;
-
-  // Build same-group list (preserving original order) including current item
-  let groupWithCurrent: HymnItem[];
-  if (curSub) {
-    groupWithCurrent = allHymns.value.filter((h) =>
-      h.category === cat &&
-      h.audioUrl &&
-      getSubFolder(h.audioUrl, cat) === curSub
-    );
-  } else {
-    groupWithCurrent = allHymns.value.filter((h) => h.category === cat);
-  }
+  // Build same-category list (preserving original order) including current item
+  const groupWithCurrent = allHymns.value.filter((h) => h.category === cat);
 
   // Find current item's position within the group
   const curIdx = groupWithCurrent.findIndex((h) => h.id === hymn.value!.id);
@@ -320,7 +274,7 @@ function onAudioEnded() {
 
 onMounted(async () => {
   try {
-    const hymns = await getHymns();
+    const hymns = await getLifesongs();
     allHymns.value = hymns;
     const id = route.params.id as string;
     hymn.value = hymns.find((h) => h.id === id) || null;
@@ -400,29 +354,6 @@ watch(() => route.params.id, async (newId) => {
 
 .audio-section {
   margin-bottom: 24px;
-}
-
-.version-tabs {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 10px;
-}
-
-.version-tab {
-  padding: 6px 16px;
-  border: 1px solid var(--ion-color-light-shade);
-  border-radius: 20px;
-  background: var(--ion-background-color);
-  color: var(--ion-color-medium);
-  font-size: 13px;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-
-.version-tab.active {
-  background: var(--ion-color-primary);
-  color: #fff;
-  border-color: var(--ion-color-primary);
 }
 
 .audio-controls-bar {

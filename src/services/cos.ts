@@ -1,4 +1,4 @@
-import type { Manifest, VideoItem, BookItem, HymnItem, DailyBibleMonth, GospelArticle, GospelFolder, LifeStudyItem, LifeStudyFolder } from '@/types';
+import type { Manifest, VideoItem, BookItem, HymnItem, DailyBibleMonth, GospelArticle, GospelFolder, LifeStudyItem, LifeStudyFolder, LifesongItem, LifesongFolder } from '@/types';
 
 const COS_BASE_URL = import.meta.env.VITE_COS_BASE_URL || '';
 const MANIFEST_PATH = '/manifest.json';
@@ -152,6 +152,43 @@ export async function getLifeStudyItems(): Promise<LifeStudyItem[]> {
 export async function getLifeStudyFolders(): Promise<LifeStudyFolder[]> {
   if (!cachedLifeStudyFolders) await getLifeStudyItems();
   return cachedLifeStudyFolders || [];
+}
+
+let cachedLifesongItems: LifesongItem[] | null = null;
+let cachedLifesongFolders: LifesongFolder[] | null = null;
+let lifesongCacheTimestamp = 0;
+const LIFESONG_CACHE_TTL = 5 * 60 * 1000;
+
+export async function getLifesongs(): Promise<LifesongItem[]> {
+  const now = Date.now();
+  if (cachedLifesongItems && (now - lifesongCacheTimestamp) < LIFESONG_CACHE_TTL) {
+    return cachedLifesongItems;
+  }
+
+  const baseUrl = getBaseUrl();
+  if (!baseUrl) return [];
+
+  try {
+    const response = await fetch(`${baseUrl}/lifesongs/lifesongs-manifest.json?t=${now}`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    const items: LifesongItem[] = data.items || [];
+    items.forEach(item => {
+      item.audioUrl = resolveUrl(item.audioUrl, baseUrl);
+    });
+    cachedLifesongItems = items;
+    cachedLifesongFolders = data.folders || [];
+    lifesongCacheTimestamp = now;
+    return items;
+  } catch (error) {
+    console.error('获取生命诗歌 manifest 失败:', error);
+    return [];
+  }
+}
+
+export async function getLifesongFolders(): Promise<LifesongFolder[]> {
+  if (!cachedLifesongFolders) await getLifesongs();
+  return cachedLifesongFolders || [];
 }
 
 let cachedDailyBible: DailyBibleMonth[] | null = null;

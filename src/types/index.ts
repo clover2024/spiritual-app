@@ -85,6 +85,23 @@ export interface LifeStudyItem {
   date?: string;
 }
 
+export interface LifesongFolder {
+  id: string;
+  name: string;
+  count?: number;
+  description?: string;
+}
+
+export interface LifesongItem {
+  id: string;
+  title: string;
+  author?: string;
+  category: string;
+  lyrics?: string;
+  audioUrl?: string;
+  date?: string;
+}
+
 export interface Manifest {
   videos?: VideoItem[];
   books?: BookItem[];

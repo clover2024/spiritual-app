@@ -43,6 +43,10 @@ const routes: Array<RouteRecordRaw> = [
         path: 'life-study',
         component: () => import('@/views/LifeStudyPage.vue'),
       },
+      {
+        path: 'lifesongs',
+        component: () => import('@/views/LifesongsPage.vue'),
+      },
     ],
   },
   {
