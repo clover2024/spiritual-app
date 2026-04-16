@@ -1,0 +1,51 @@
+{
+  "folders": [
+    {
+      "id": "life-words",
+      "name": "生命的话",
+      "description": ""
+    },
+    {
+      "id": "gospel-station",
+      "name": "福音基站",
+      "description": ""
+    }
+  ],
+  "articles": [
+    {
+      "id": "article-躲藏在基督的隐藏处",
+      "title": "001-躲藏在基督的隐藏处",
+      "author": "倪柝声",
+      "folder": "life-words",
+      "summary": "撒但试探我们的目的，总是使我们去作一些事。如果他一直藏在坦克车的里面，他绝对是安全的。",
+      "contentUrl": "/gospel/articles/article-躲藏在基督的隐藏处.md",
+      "date": "2026-04-16"
+    },
+    {
+      "id": "article-科学与信仰一",
+      "title": "科学与信仰（一）敬畏耶和华是智慧的开端",
+      "folder": "gospel-station",
+      "summary": "敬畏耶和华是智慧的开端，认识至胜者便是聪明。凡祈求的，就得着；寻找的，就寻见；叩门的，就给他开门。",
+      "contentUrl": "/gospel/gospel-article-1.md",
+      "audioUrl": "/gospel/科学与信仰（一）敬畏耶和华是智慧的开端.mp3",
+      "date": "2026-04-16"
+    },
+    {
+      "id": "article-科学与信仰二",
+      "title": "科学与信仰（二）人的被造",
+      "folder": "gospel-station",
+      "summary": "在所有的创造里，神都表现出祂极致的智慧。神不仅创造了我们，人堕落了、远离了神，神还要拯救我们。",
+      "contentUrl": "/gospel/gospel-article-2.md",
+      "audioUrl": "/gospel/科学与信仰（二）人的被造.mp3",
+      "date": "2026-04-16"
+    },
+    {
+      "id": "article-科学与信仰三",
+      "title": "科学与信仰（三）从AI失控看人性真相",
+      "folder": "gospel-station",
+      "summary": "人已经堕落了，AI的发展帮我们看懂这件事。堕落的知识，孕育出堕落的智能。人无法自救，神亲自成为外力，来到世间——祂就是耶稣。",
+      "contentUrl": "/gospel/gospel-article-3.md",
+      "date": "2026-04-16"
+    }
+  ]
+}

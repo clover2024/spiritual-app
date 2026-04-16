@@ -56,11 +56,18 @@ export interface GospelArticle {
   id: string;
   title: string;
   author?: string;
+  folder?: string;
   summary?: string;
   contentUrl: string;
   audioUrl?: string;
   coverUrl?: string;
   date?: string;
+}
+
+export interface GospelFolder {
+  id: string;
+  name: string;
+  description?: string;
 }
 
 export interface Manifest {

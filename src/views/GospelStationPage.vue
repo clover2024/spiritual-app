@@ -60,13 +60,14 @@ import {
   RefresherCustomEvent,
 } from '@ionic/vue';
 import { folderOutline } from 'ionicons/icons';
-import { getGospelArticles } from '@/services/cos';
+import { getGospelArticles, getGospelFolders } from '@/services/cos';
+import type { GospelFolder, GospelArticle } from '@/types';
 
 const router = useRouter();
 const loading = ref(true);
 const folders = ref<any[]>([]);
 
-interface Folder {
+interface DisplayFolder {
   id: string;
   name: string;
   count: number;
@@ -74,13 +75,13 @@ interface Folder {
 
 async function loadData() {
   try {
-    const articles = await getGospelArticles();
-    
-    folders.value = [{
-      id: 'gospel-station',
-      name: '福音基站',
-      count: articles.length
-    }];
+    const [allFolders, articles] = await Promise.all([getGospelFolders(), getGospelArticles()]);
+
+    folders.value = allFolders.map((f: GospelFolder) => ({
+      id: f.id,
+      name: f.name,
+      count: articles.filter((a: GospelArticle) => a.folder === f.id).length,
+    }));
   } catch (e) {
     console.error('加载文章失败:', e);
   } finally {
@@ -89,12 +90,12 @@ async function loadData() {
 }
 
 function handleRefresh(event: RefresherCustomEvent) {
-  getGospelArticles().then((articles) => {
-    folders.value = [{
-      id: 'gospel-station',
-      name: '福音基站',
-      count: articles.length
-    }];
+  Promise.all([getGospelFolders(), getGospelArticles()]).then(([allFolders, articles]) => {
+    folders.value = allFolders.map((f: GospelFolder) => ({
+      id: f.id,
+      name: f.name,
+      count: articles.filter((a: GospelArticle) => a.folder === f.id).length,
+    }));
     event.target.complete();
   }).catch(() => {
     event.target.complete();

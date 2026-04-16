@@ -5,7 +5,7 @@
         <ion-buttons slot="start">
           <ion-back-button default-href="/tabs/gospel"></ion-back-button>
         </ion-buttons>
-        <ion-title>福音基站</ion-title>
+        <ion-title>{{ folderName }}</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content class="ion-padding">
@@ -48,7 +48,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import {
   IonPage,
   IonHeader,
@@ -67,16 +67,22 @@ import {
   RefresherCustomEvent,
 } from '@ionic/vue';
 import { documentTextOutline } from 'ionicons/icons';
-import { getGospelArticles } from '@/services/cos';
+import { getGospelArticles, getGospelFolders } from '@/services/cos';
 
+const route = useRoute();
 const router = useRouter();
 const loading = ref(true);
 const articles = ref<any[]>([]);
+const folderName = ref('文章列表');
 
 async function loadData() {
   try {
-    const data = await getGospelArticles();
-    articles.value = data.sort((a, b) => {
+    const folderId = route.params.folderId as string;
+    const [folders, data] = await Promise.all([getGospelFolders(), getGospelArticles()]);
+    const folder = folders.find((f: any) => f.id === folderId);
+    if (folder) folderName.value = folder.name;
+    const filtered = folderId ? data.filter((a: any) => a.folder === folderId) : data;
+    articles.value = filtered.sort((a: any, b: any) => {
       const cnNum: Record<string, number> = { '一': 1, '二': 2, '三': 3, '四': 4, '五': 5, '六': 6, '七': 7, '八': 8, '九': 9, '十': 10 };
       const getNum = (t: string) => { const m = t.match(/[一二三四五六七八九十]/); return m ? (cnNum[m[0]] ?? 99) : 99; };
       return getNum(a.title) - getNum(b.title) || a.title.localeCompare(b.title, 'zh');
@@ -89,8 +95,10 @@ async function loadData() {
 }
 
 function handleRefresh(event: RefresherCustomEvent) {
+  const folderId = route.params.folderId as string;
   getGospelArticles().then((data) => {
-    articles.value = data.sort((a, b) => {
+    const filtered = folderId ? data.filter((a: any) => a.folder === folderId) : data;
+    articles.value = filtered.sort((a: any, b: any) => {
       const cnNum: Record<string, number> = { '一': 1, '二': 2, '三': 3, '四': 4, '五': 5, '六': 6, '七': 7, '八': 8, '九': 9, '十': 10 };
       const getNum = (t: string) => { const m = t.match(/[一二三四五六七八九十]/); return m ? (cnNum[m[0]] ?? 99) : 99; };
       return getNum(a.title) - getNum(b.title) || a.title.localeCompare(b.title, 'zh');

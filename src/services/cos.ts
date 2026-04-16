@@ -1,4 +1,4 @@
-import type { Manifest, VideoItem, BookItem, HymnItem, DailyBibleMonth, GospelArticle } from '@/types';
+import type { Manifest, VideoItem, BookItem, HymnItem, DailyBibleMonth, GospelArticle, GospelFolder } from '@/types';
 
 const COS_BASE_URL = import.meta.env.VITE_COS_BASE_URL || '';
 const MANIFEST_PATH = '/manifest.json';
@@ -6,6 +6,11 @@ const MANIFEST_PATH = '/manifest.json';
 let cachedManifest: Manifest | null = null;
 let cacheTimestamp = 0;
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+let cachedGospelArticles: GospelArticle[] | null = null;
+let cachedGospelFolders: GospelFolder[] | null = null;
+let gospelCacheTimestamp = 0;
+const GOSPEL_CACHE_TTL = 5 * 60 * 1000;
 
 function getBaseUrl(): string {
   if (COS_BASE_URL) return COS_BASE_URL;
@@ -54,11 +59,6 @@ export async function fetchManifest(): Promise<Manifest> {
         v.url = resolveUrl(v.url, baseUrl) || '';
       });
     });
-    manifest.gospelArticles?.forEach(g => {
-      g.contentUrl = resolveUrl(g.contentUrl, baseUrl) || '';
-      g.audioUrl = resolveUrl(g.audioUrl, baseUrl);
-      g.coverUrl = resolveUrl(g.coverUrl, baseUrl);
-    });
     cachedManifest = manifest;
     cacheTimestamp = now;
     return manifest;
@@ -84,8 +84,37 @@ export async function getHymns(): Promise<HymnItem[]> {
 }
 
 export async function getGospelArticles(): Promise<GospelArticle[]> {
-  const manifest = await fetchManifest();
-  return manifest.gospelArticles || [];
+  const now = Date.now();
+  if (cachedGospelArticles && (now - gospelCacheTimestamp) < GOSPEL_CACHE_TTL) {
+    return cachedGospelArticles;
+  }
+
+  const baseUrl = getBaseUrl();
+  if (!baseUrl) return [];
+
+  try {
+    const response = await fetch(`${baseUrl}/gospel/gospel-manifest.json?t=${now}`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    const articles: GospelArticle[] = data.articles || [];
+    articles.forEach(g => {
+      g.contentUrl = resolveUrl(g.contentUrl, baseUrl) || '';
+      g.audioUrl = resolveUrl(g.audioUrl, baseUrl);
+      g.coverUrl = resolveUrl(g.coverUrl, baseUrl);
+    });
+    cachedGospelArticles = articles;
+    cachedGospelFolders = data.folders || [];
+    gospelCacheTimestamp = now;
+    return articles;
+  } catch (error) {
+    console.error('获取福音 manifest 失败:', error);
+    return [];
+  }
+}
+
+export async function getGospelFolders(): Promise<GospelFolder[]> {
+  if (!cachedGospelFolders) await getGospelArticles();
+  return cachedGospelFolders || [];
 }
 
 let cachedDailyBible: DailyBibleMonth[] | null = null;
