@@ -103,7 +103,7 @@ function handleRefresh(event: RefresherCustomEvent) {
 }
 
 function goToFolder(folderId: string) {
-  router.push(`/gospel/folder/${folderId}`);
+  router.push(`/wzs/folder/${folderId}`);
 }
 
 onMounted(loadData);

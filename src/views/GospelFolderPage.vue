@@ -47,7 +47,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import {
   IonPage,
@@ -68,6 +68,8 @@ import {
 } from '@ionic/vue';
 import { documentTextOutline } from 'ionicons/icons';
 import { getGospelArticles, getGospelFolders } from '@/services/cos';
+import { setupWxShare } from '@/composables/useWxShare';
+import { resetPageMeta } from '@/composables/usePageMeta';
 
 const route = useRoute();
 const router = useRouter();
@@ -91,6 +93,7 @@ async function loadData() {
     console.error('加载文章失败:', e);
   } finally {
     loading.value = false;
+    setupWxShare({ title: folderName.value });
   }
 }
 
@@ -110,10 +113,14 @@ function handleRefresh(event: RefresherCustomEvent) {
 }
 
 function goToArticle(id: string) {
-  router.push(`/gospel/${id}`);
+  router.push(`/wzs/${id}`);
 }
 
 onMounted(loadData);
+
+onBeforeUnmount(() => {
+  resetPageMeta();
+});
 </script>
 
 <style scoped>

@@ -58,11 +58,11 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/DailyBibleDetailPage.vue'),
   },
   {
-    path: '/gospel/folder/:folderId',
+    path: '/wzs/folder/:folderId',
     component: () => import('@/views/GospelFolderPage.vue'),
   },
   {
-    path: '/gospel/:id',
+    path: '/wzs/:id',
     component: () => import('@/views/GospelDetailPage.vue'),
   },
 ];
