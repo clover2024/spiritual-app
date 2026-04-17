@@ -65,7 +65,9 @@ const rawContent = ref('');
 
 const renderedContent = computed(() => {
   if (!rawContent.value) return '';
-  return marked(rawContent.value);
+  const html = marked(rawContent.value) as string;
+  // Fix unprocessed **bold** markers (marked struggles with CJK-adjacent **)
+  return html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
 });
 
 async function loadArticle() {
