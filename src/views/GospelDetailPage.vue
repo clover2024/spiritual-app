@@ -28,6 +28,25 @@
         </div>
 
         <div class="article-content" v-html="renderedContent"></div>
+
+        <!-- 同类推荐 -->
+        <div v-if="relatedArticles.length > 0" class="related-section">
+          <h3 class="related-title">同类推荐</h3>
+          <ion-list lines="full">
+            <ion-item
+              v-for="ra in relatedArticles"
+              :key="ra.id"
+              button
+              detail
+              @click="goToArticle(ra.id)"
+            >
+              <ion-label>
+                <h3>{{ ra.title }}</h3>
+                <p v-if="ra.summary" class="related-summary">{{ ra.summary }}</p>
+              </ion-label>
+            </ion-item>
+          </ion-list>
+        </div>
       </template>
 
       <div v-else class="error-container">
@@ -40,7 +59,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import {
   IonPage,
   IonHeader,
@@ -59,9 +78,18 @@ import BottomNav from '@/components/BottomNav.vue';
 import type { GospelArticle } from '@/types';
 
 const route = useRoute();
+const router = useRouter();
 const loading = ref(true);
 const article = ref<GospelArticle | null>(null);
 const rawContent = ref('');
+const allArticles = ref<GospelArticle[]>([]);
+
+const relatedArticles = computed(() => {
+  if (!article.value) return [];
+  return allArticles.value.filter(
+    (a) => a.folder === article.value!.folder && a.id !== article.value!.id
+  );
+});
 
 const renderedContent = computed(() => {
   if (!rawContent.value) return '';
@@ -74,6 +102,7 @@ async function loadArticle() {
   try {
     const articleId = route.params.id as string;
     const articles = await getGospelArticles();
+    allArticles.value = articles;
     const found = articles.find((a) => a.id === articleId);
     if (found) {
       article.value = found;
@@ -97,6 +126,11 @@ async function loadArticle() {
 }
 
 onMounted(loadArticle);
+
+function goToArticle(id: string) {
+  loading.value = true;
+  router.push(`/wzs/${id}`).then(() => loadArticle());
+}
 
 onBeforeUnmount(() => {
   resetPageMeta();
@@ -199,6 +233,27 @@ onBeforeUnmount(() => {
 
 .article-content :deep(li) {
   margin-bottom: 6px;
+}
+
+.related-section {
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid var(--ion-color-light);
+}
+
+.related-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--ion-text-color);
+}
+
+.related-summary {
+  font-size: 13px;
+  color: var(--ion-color-medium);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .error-container {
