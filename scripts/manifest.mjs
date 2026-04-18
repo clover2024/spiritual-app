@@ -50,6 +50,7 @@ const FILES = {
   main: { local: 'manifest.json', remote: 'manifest.json' },
   'life-study': { local: 'life-study-manifest.json', remote: 'life-study/life-study-manifest.json' },
   lifesongs: { local: 'lifesongs-manifest.json', remote: 'lifesongs/lifesongs-manifest.json' },
+  videos: { local: 'videos-manifest.json', remote: 'videos/videos-manifest.json' },
 };
 
 function ensureDir() {
@@ -96,7 +97,7 @@ const [,, action, target] = process.argv;
 const targets = target === 'all' ? Object.keys(FILES) : [target];
 
 if (!action || !target) {
-  console.log('Usage: node scripts/manifest.mjs <push|pull> <gospel|main|life-study|lifesongs|all>');
+  console.log('Usage: node scripts/manifest.mjs <push|pull> <gospel|main|life-study|lifesongs|videos|all>');
   process.exit(1);
 }
 

@@ -12,6 +12,10 @@ let cachedGospelFolders: GospelFolder[] | null = null;
 let gospelCacheTimestamp = 0;
 const GOSPEL_CACHE_TTL = 5 * 60 * 1000;
 
+let cachedVideoItems: VideoItem[] | null = null;
+let videoCacheTimestamp = 0;
+const VIDEO_CACHE_TTL = 5 * 60 * 1000;
+
 function getBaseUrl(): string {
   if (COS_BASE_URL) return COS_BASE_URL;
   const bucket = import.meta.env.VITE_COS_BUCKET;
@@ -69,8 +73,30 @@ export async function fetchManifest(): Promise<Manifest> {
 }
 
 export async function getVideos(): Promise<VideoItem[]> {
-  const manifest = await fetchManifest();
-  return manifest.videos || [];
+  const now = Date.now();
+  if (cachedVideoItems && (now - videoCacheTimestamp) < VIDEO_CACHE_TTL) {
+    return cachedVideoItems;
+  }
+
+  const baseUrl = getBaseUrl();
+  if (!baseUrl) return [];
+
+  try {
+    const response = await fetch(`${baseUrl}/videos/videos-manifest.json?t=${now}`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    const items: VideoItem[] = data.items || [];
+    items.forEach(item => {
+      item.videoUrl = resolveUrl(item.videoUrl, baseUrl) || '';
+      item.coverUrl = resolveUrl(item.coverUrl, baseUrl);
+    });
+    cachedVideoItems = items;
+    videoCacheTimestamp = now;
+    return items;
+  } catch (error) {
+    console.error('获取视频 manifest 失败:', error);
+    return [];
+  }
 }
 
 export async function getBooks(): Promise<BookItem[]> {
