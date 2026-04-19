@@ -16,6 +16,10 @@ let cachedVideoItems: VideoItem[] | null = null;
 let videoCacheTimestamp = 0;
 const VIDEO_CACHE_TTL = 5 * 60 * 1000;
 
+let cachedBookItems: BookItem[] | null = null;
+let bookCacheTimestamp = 0;
+const BOOK_CACHE_TTL = 5 * 60 * 1000;
+
 function getBaseUrl(): string {
   if (COS_BASE_URL) return COS_BASE_URL;
   const bucket = import.meta.env.VITE_COS_BUCKET;
@@ -100,8 +104,30 @@ export async function getVideos(): Promise<VideoItem[]> {
 }
 
 export async function getBooks(): Promise<BookItem[]> {
-  const manifest = await fetchManifest();
-  return manifest.books || [];
+  const now = Date.now();
+  if (cachedBookItems && (now - bookCacheTimestamp) < BOOK_CACHE_TTL) {
+    return cachedBookItems;
+  }
+
+  const baseUrl = getBaseUrl();
+  if (!baseUrl) return [];
+
+  try {
+    const response = await fetch(`${baseUrl}/books/books-manifest.json?t=${now}`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    const items: BookItem[] = data.items || [];
+    items.forEach(item => {
+      item.fileUrl = resolveUrl(item.fileUrl, baseUrl) || '';
+      item.coverUrl = resolveUrl(item.coverUrl, baseUrl);
+    });
+    cachedBookItems = items;
+    bookCacheTimestamp = now;
+    return items;
+  } catch (error) {
+    console.error('获取书报 manifest 失败:', error);
+    return [];
+  }
 }
 
 export async function getHymns(): Promise<HymnItem[]> {

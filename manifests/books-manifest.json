@@ -1,0 +1,58 @@
+{
+  "items": [
+    {
+      "id": "book-今时代神圣启示的先见-倪柝声",
+      "title": "今时代神圣启示的先见-倪柝声",
+      "fileUrl": "/books/今时代神圣启示的先见-倪柝声.pdf",
+      "format": "pdf"
+    },
+    {
+      "id": "book-历史与启示",
+      "title": "历史与启示",
+      "fileUrl": "/books/历史与启示.epub",
+      "format": "epub"
+    },
+    {
+      "id": "book-破壳飞腾-吴秀良",
+      "title": "破壳飞腾-吴秀良",
+      "fileUrl": "/books/破壳飞腾-吴秀良.pdf",
+      "format": "pdf"
+    },
+    {
+      "id": "book-人生的意义-较详细版",
+      "title": "人生的意义（较详细版）",
+      "fileUrl": "/books/人生的意义（较详细版）.pdf",
+      "format": "pdf"
+    },
+    {
+      "id": "book-诗人与诗歌",
+      "title": "诗人与诗歌",
+      "fileUrl": "/books/诗人与诗歌.pdf",
+      "format": "pdf"
+    },
+    {
+      "id": "book-四把钥匙简易单张",
+      "title": "四把钥匙简易单张",
+      "fileUrl": "/books/四把钥匙简易单张.pdf",
+      "format": "pdf"
+    },
+    {
+      "id": "book-正确的姊妹",
+      "title": "正确的姊妹",
+      "fileUrl": "/books/正确的姊妹.md",
+      "format": "markdown"
+    },
+    {
+      "id": "book-主仆倪柝声弟兄见证集锦",
+      "title": "主仆倪柝声弟兄见证集锦",
+      "fileUrl": "/books/主仆倪柝声弟兄见证集锦.pdf",
+      "format": "pdf"
+    },
+    {
+      "id": "book-作工的炸力",
+      "title": "作工的炸力",
+      "fileUrl": "/books/作工的炸力.md",
+      "format": "markdown"
+    }
+  ]
+}
