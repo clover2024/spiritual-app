@@ -60,18 +60,20 @@ import {
   IonSpinner,
 } from '@ionic/vue';
 import { imagesOutline, closeOutline } from 'ionicons/icons';
-import { getVisualBibleItems } from '@/services/cos';
+import { getVisualBibleItems, getVisualBibleFolders } from '@/services/cos';
 import BottomNav from '@/components/BottomNav.vue';
-import type { VisualBibleItem } from '@/types';
+import type { VisualBibleItem, VisualBibleFolder } from '@/types';
 
 const route = useRoute();
 const loading = ref(true);
 const allItems = ref<VisualBibleItem[]>([]);
+const allFolders = ref<VisualBibleFolder[]>([]);
 const fullscreenUrl = ref('');
 
-const folderId = computed(() => decodeURIComponent(route.params.folderId as string));
-const folderName = ref(folderId.value);
-const items = computed(() => allItems.value.filter(i => i.folder === folderId.value));
+const folderSlug = computed(() => route.params.folderId as string);
+const currentFolder = computed(() => allFolders.value.find(f => f.slug === folderSlug.value));
+const folderName = computed(() => currentFolder.value?.name || '');
+const items = computed(() => allItems.value.filter(i => i.folder === folderSlug.value));
 
 function openImage(item: VisualBibleItem) {
   fullscreenUrl.value = item.imageUrl;
@@ -79,8 +81,9 @@ function openImage(item: VisualBibleItem) {
 
 async function loadData() {
   try {
-    const data = await getVisualBibleItems();
-    allItems.value = data;
+    const [items, folders] = await Promise.all([getVisualBibleItems(), getVisualBibleFolders()]);
+    allItems.value = items;
+    allFolders.value = folders;
   } catch (e) {
     console.error('加载视觉圣经作品失败:', e);
   } finally {

@@ -103,7 +103,7 @@ export interface LifesongItem {
 }
 
 export interface VisualBibleFolder {
-  id: string;
+  slug: string;
   name: string;
   count?: number;
 }

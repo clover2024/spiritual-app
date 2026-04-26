@@ -3,6 +3,9 @@
  * Scan a local directory for visual bible images, upload to COS,
  * and generate manifests/visual-bible-manifest.json.
  *
+ * Folder names are mapped to short slugs for clean URLs.
+ * Slugs are preserved from existing manifest; new folders get auto-generated slugs.
+ *
  * Directory structure expected:
  *   <input-dir>/
  *     诗篇23篇/
@@ -61,6 +64,22 @@ if (!fs.existsSync(resolvedDir)) {
 const doUpload = process.argv.includes('--upload') || process.argv.includes('--push');
 const doPush = process.argv.includes('--push');
 
+// Load existing manifest to preserve slugs
+const existingSlugMap = {};
+if (fs.existsSync(MANIFEST_PATH)) {
+  try {
+    const old = JSON.parse(fs.readFileSync(MANIFEST_PATH, 'utf-8'));
+    for (const f of (old.folders || [])) {
+      existingSlugMap[f.name] = f.slug;
+    }
+  } catch (_) {}
+}
+
+let slugCounter = 1;
+function generateSlug() {
+  return `vb${slugCounter++}`;
+}
+
 async function uploadFile(localPath, remoteKey) {
   const body = fs.readFileSync(localPath);
   const ext = path.extname(localPath).toLowerCase();
@@ -99,10 +118,11 @@ async function main() {
 
     if (imageFiles.length === 0) continue;
 
-    console.log(`  Folder: ${folderName} (${imageFiles.length} images)`);
+    const slug = existingSlugMap[folderName] || generateSlug();
+    console.log(`  Folder: ${folderName} → ${slug} (${imageFiles.length} images)`);
 
     folders.push({
-      id: folderName,
+      slug,
       name: folderName,
       count: imageFiles.length,
     });
@@ -122,7 +142,7 @@ async function main() {
       items.push({
         id,
         title,
-        folder: folderName,
+        folder: slug,
         imageUrl: `/${remoteKey}`,
       });
 

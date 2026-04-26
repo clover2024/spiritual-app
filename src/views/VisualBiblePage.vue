@@ -19,9 +19,9 @@
         <div class="folder-section">
           <div
             v-for="folder in folders"
-            :key="folder.id"
+            :key="folder.slug"
             class="entry-card"
-            @click="router.push(`/visual-bible/${encodeURIComponent(folder.id)}`)"
+            @click="router.push(`/visual-bible/${folder.slug}`)"
           >
             <div class="folder-card-icon">
               <ion-icon :icon="imagesOutline" />
@@ -63,7 +63,7 @@ import { getVisualBibleFolders } from '@/services/cos';
 
 const router = useRouter();
 const loading = ref(true);
-const folders = ref<{ id: string; name: string; count?: number }[]>([]);
+const folders = ref<{ slug: string; name: string; count?: number }[]>([]);
 
 async function loadData() {
   try {
