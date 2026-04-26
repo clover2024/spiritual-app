@@ -89,11 +89,9 @@ async function loadData() {
 
     const folder = folders.find(f => f.slug === folderSlug.value);
     if (folder) {
-      const firstImage = items.find(i => i.folder === folder.slug);
       setupWxShare({
         title: `视觉圣经-${folder.name}`,
         description: `${folder.name} · ${items.filter(i => i.folder === folder.slug).length} 幅作品`,
-        image: firstImage?.imageUrl,
       });
     }
   } catch (e) {
