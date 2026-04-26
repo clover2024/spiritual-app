@@ -1,7 +1,7 @@
 import { setPageMeta } from './usePageMeta';
 
 const WX_SIGN_URL = import.meta.env.VITE_WX_SIGN_URL || '';
-const SHARE_ICON = 'https://7.maizi.tech/share-icon.jpg';
+const SHARE_ICON_BASE = 'https://7.maizi.tech/share-icon.jpg';
 
 interface WxConfig {
   appId: string;
@@ -92,7 +92,7 @@ export async function setupWxShare(options: {
 }) {
   const { title, description, image } = options;
   const link = window.location.href;
-  const imgUrl = image || SHARE_ICON;
+  const imgUrl = image || `${SHARE_ICON_BASE}?v=${Date.now()}`;
   const desc = description || '';
 
   // 更新 meta 标签
