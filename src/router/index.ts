@@ -28,6 +28,10 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('@/views/HymnListPage.vue'),
       },
       {
+        path: 'visual-bible',
+        component: () => import('@/views/VisualBiblePage.vue'),
+      },
+      {
         path: 'daily-bible',
         component: () => import('@/views/DailyBiblePage.vue'),
       },
@@ -64,6 +68,10 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/daily-bible/:month/:day',
     component: () => import('@/views/DailyBibleDetailPage.vue'),
+  },
+  {
+    path: '/visual-bible/:folderId',
+    component: () => import('@/views/VisualBibleFolderPage.vue'),
   },
   {
     path: '/wzs/folder/:folderId',

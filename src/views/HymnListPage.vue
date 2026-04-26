@@ -70,6 +70,18 @@
             </div>
             <ion-icon :icon="chevronForwardOutline" class="folder-arrow" />
           </div>
+
+          <!-- 日日行入口 -->
+          <div class="entry-card" @click="router.push('/tabs/daily-bible')">
+            <div class="folder-card-icon calendar-icon">
+              <ion-icon :icon="calendarOutline" />
+            </div>
+            <div class="folder-card-info">
+              <span class="folder-name">日日行</span>
+              <span class="folder-count">每日读经 · 365天</span>
+            </div>
+            <ion-icon :icon="chevronForwardOutline" class="folder-arrow" />
+          </div>
         </div>
       </template>
     </ion-content>
@@ -100,6 +112,7 @@ import {
   musicalNotesOutline,
   chevronForwardOutline,
   bookOutline,
+  calendarOutline,
 } from 'ionicons/icons';
 import { getLifesongs } from '@/services/cos';
 import type { LifesongItem } from '@/types';
@@ -190,6 +203,10 @@ onMounted(loadData);
 
 .folder-card-icon.book-icon {
   color: var(--ion-color-primary);
+}
+
+.folder-card-icon.calendar-icon {
+  color: var(--ion-color-secondary);
 }
 
 .folder-card-info {

@@ -102,6 +102,19 @@ export interface LifesongItem {
   date?: string;
 }
 
+export interface VisualBibleFolder {
+  id: string;
+  name: string;
+  count?: number;
+}
+
+export interface VisualBibleItem {
+  id: string;
+  title: string;
+  folder: string;
+  imageUrl: string;
+}
+
 export interface Manifest {
   videos?: VideoItem[];
   books?: BookItem[];

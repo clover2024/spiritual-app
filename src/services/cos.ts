@@ -1,4 +1,4 @@
-import type { Manifest, VideoItem, BookItem, HymnItem, DailyBibleMonth, GospelArticle, GospelFolder, LifeStudyItem, LifeStudyFolder, LifesongItem, LifesongFolder } from '@/types';
+import type { Manifest, VideoItem, BookItem, HymnItem, DailyBibleMonth, GospelArticle, GospelFolder, LifeStudyItem, LifeStudyFolder, LifesongItem, LifesongFolder, VisualBibleFolder, VisualBibleItem } from '@/types';
 
 const COS_BASE_URL = import.meta.env.VITE_COS_BASE_URL || '';
 const MANIFEST_PATH = '/manifest.json';
@@ -241,6 +241,43 @@ export async function getLifesongs(): Promise<LifesongItem[]> {
 export async function getLifesongFolders(): Promise<LifesongFolder[]> {
   if (!cachedLifesongFolders) await getLifesongs();
   return cachedLifesongFolders || [];
+}
+
+let cachedVisualBibleItems: VisualBibleItem[] | null = null;
+let cachedVisualBibleFolders: VisualBibleFolder[] | null = null;
+let visualBibleCacheTimestamp = 0;
+const VISUAL_BIBLE_CACHE_TTL = 5 * 60 * 1000;
+
+export async function getVisualBibleItems(): Promise<VisualBibleItem[]> {
+  const now = Date.now();
+  if (cachedVisualBibleItems && (now - visualBibleCacheTimestamp) < VISUAL_BIBLE_CACHE_TTL) {
+    return cachedVisualBibleItems;
+  }
+
+  const baseUrl = getBaseUrl();
+  if (!baseUrl) return [];
+
+  try {
+    const response = await fetch(`${baseUrl}/visual-bible/visual-bible-manifest.json?t=${now}`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    const items: VisualBibleItem[] = data.items || [];
+    items.forEach(item => {
+      item.imageUrl = resolveUrl(item.imageUrl, baseUrl) || '';
+    });
+    cachedVisualBibleItems = items;
+    cachedVisualBibleFolders = data.folders || [];
+    visualBibleCacheTimestamp = now;
+    return items;
+  } catch (error) {
+    console.error('获取视觉圣经 manifest 失败:', error);
+    return [];
+  }
+}
+
+export async function getVisualBibleFolders(): Promise<VisualBibleFolder[]> {
+  if (!cachedVisualBibleFolders) await getVisualBibleItems();
+  return cachedVisualBibleFolders || [];
 }
 
 let cachedDailyBible: DailyBibleMonth[] | null = null;

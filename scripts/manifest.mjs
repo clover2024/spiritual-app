@@ -52,6 +52,7 @@ const FILES = {
   lifesongs: { local: 'lifesongs-manifest.json', remote: 'lifesongs/lifesongs-manifest.json' },
   videos: { local: 'videos-manifest.json', remote: 'videos/videos-manifest.json' },
   books: { local: 'books-manifest.json', remote: 'books/books-manifest.json' },
+  'visual-bible': { local: 'visual-bible-manifest.json', remote: 'visual-bible/visual-bible-manifest.json' },
 };
 
 function ensureDir() {

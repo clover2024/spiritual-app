@@ -10,6 +10,10 @@
           <ion-icon :icon="musicalNotesOutline" />
           <span>音频</span>
         </a>
+        <a class="nav-item" @click="go('/tabs/visual-bible')">
+          <ion-icon :icon="imagesOutline" />
+          <span>视觉圣经</span>
+        </a>
         <a class="nav-item" @click="go('/tabs/gospel')">
           <ion-icon :icon="documentTextOutline" />
           <span>文字室</span>
@@ -17,10 +21,6 @@
         <a class="nav-item" @click="go('/tabs/books')">
           <ion-icon :icon="bookOutline" />
           <span>书报</span>
-        </a>
-        <a class="nav-item" @click="go('/tabs/daily-bible')">
-          <ion-icon :icon="calendarOutline" />
-          <span>日日行</span>
         </a>
         <a class="nav-item" @click="go('/tabs/support')">
           <ion-icon :icon="heartOutline" />
@@ -38,7 +38,7 @@ import {
   playCircleOutline,
   bookOutline,
   musicalNotesOutline,
-  calendarOutline,
+  imagesOutline,
   documentTextOutline,
   heartOutline,
 } from 'ionicons/icons';
