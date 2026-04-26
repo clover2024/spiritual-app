@@ -64,7 +64,10 @@ import { getVisualBibleItems, getVisualBibleFolders } from '@/services/cos';
 import BottomNav from '@/components/BottomNav.vue';
 import { setupWxShare } from '@/composables/useWxShare';
 import { resetPageMeta } from '@/composables/usePageMeta';
+import { getFullUrl } from '@/services/cos';
 import type { VisualBibleItem, VisualBibleFolder } from '@/types';
+
+const SHARE_ICON = '/visual-bible/share-icon.png';
 
 const route = useRoute();
 const loading = ref(true);
@@ -92,6 +95,7 @@ async function loadData() {
       setupWxShare({
         title: `视觉圣经-${folder.name}`,
         description: `${folder.name} · ${items.filter(i => i.folder === folder.slug).length} 幅作品`,
+        image: getFullUrl(SHARE_ICON),
       });
     }
   } catch (e) {
