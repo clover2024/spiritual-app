@@ -46,7 +46,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useRoute } from 'vue-router';
 import {
   IonPage,
@@ -62,6 +62,8 @@ import {
 import { imagesOutline, closeOutline } from 'ionicons/icons';
 import { getVisualBibleItems, getVisualBibleFolders } from '@/services/cos';
 import BottomNav from '@/components/BottomNav.vue';
+import { setupWxShare } from '@/composables/useWxShare';
+import { resetPageMeta } from '@/composables/usePageMeta';
 import type { VisualBibleItem, VisualBibleFolder } from '@/types';
 
 const route = useRoute();
@@ -84,6 +86,16 @@ async function loadData() {
     const [items, folders] = await Promise.all([getVisualBibleItems(), getVisualBibleFolders()]);
     allItems.value = items;
     allFolders.value = folders;
+
+    const folder = folders.find(f => f.slug === folderSlug.value);
+    if (folder) {
+      const firstImage = items.find(i => i.folder === folder.slug);
+      setupWxShare({
+        title: `视觉圣经-${folder.name}`,
+        description: `${folder.name} · ${items.filter(i => i.folder === folder.slug).length} 幅作品`,
+        image: firstImage?.imageUrl,
+      });
+    }
   } catch (e) {
     console.error('加载视觉圣经作品失败:', e);
   } finally {
@@ -92,6 +104,10 @@ async function loadData() {
 }
 
 onMounted(loadData);
+
+onBeforeUnmount(() => {
+  resetPageMeta();
+});
 </script>
 
 <style scoped>
