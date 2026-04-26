@@ -19,6 +19,11 @@
       "slug": "mt6-33",
       "name": "马太福音六章三十三节",
       "count": 1
+    },
+    {
+      "slug": "mt6-34",
+      "name": "马太福音六章三十四节",
+      "count": 1
     }
   ],
   "items": [
@@ -45,6 +50,12 @@
       "title": "先求他的国和他的义",
       "folder": "mt6-33",
       "imageUrl": "/visual-bible/马太福音六章三十三节/先求他的国和他的义.png"
+    },
+    {
+      "id": "vb-马太福音六章三十四节-不要为明天忧虑",
+      "title": "不要为明天忧虑",
+      "folder": "mt6-34",
+      "imageUrl": "/visual-bible/马太福音六章三十四节/不要为明天忧虑.png"
     }
   ]
 }
