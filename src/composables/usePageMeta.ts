@@ -1,6 +1,6 @@
 const DEFAULT_TITLE = '橄榄山';
 const DEFAULT_DESCRIPTION = '视频、音频、书报、每日读经、福音文章，你的属灵陪伴';
-const DEFAULT_IMAGE = 'https://7.maizi.tech/share-icon.png';
+const DEFAULT_IMAGE = 'https://clover-1313238640.cos.ap-nanjing.myqcloud.com/share-icon.png';
 
 function getOrCreateMeta(attr: string, attrValue: string): HTMLMetaElement {
   let el = document.querySelector(`meta[${attr}="${attrValue}"]`) as HTMLMetaElement;
