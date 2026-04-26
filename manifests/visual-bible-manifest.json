@@ -14,6 +14,11 @@
       "slug": "ps23",
       "name": "诗篇23篇",
       "count": 1
+    },
+    {
+      "slug": "mt6-33",
+      "name": "马太福音六章三十三节",
+      "count": 1
     }
   ],
   "items": [
@@ -34,6 +39,12 @@
       "title": "诗篇23篇-王羲之书法",
       "folder": "ps23",
       "imageUrl": "/visual-bible/诗篇23篇/诗篇23篇-王羲之书法.png"
+    },
+    {
+      "id": "vb-马太福音六章三十三节-先求他的国和他的义",
+      "title": "先求他的国和他的义",
+      "folder": "mt6-33",
+      "imageUrl": "/visual-bible/马太福音六章三十三节/先求他的国和他的义.png"
     }
   ]
 }
