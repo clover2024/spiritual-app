@@ -1,7 +1,7 @@
 import { setPageMeta } from './usePageMeta';
 
 const WX_SIGN_URL = import.meta.env.VITE_WX_SIGN_URL || '';
-const SHARE_ICON = 'https://7.maizi.tech/share-icon.png';
+const SHARE_ICON = 'https://7.maizi.tech/share-icon.jpg';
 
 interface WxConfig {
   appId: string;
