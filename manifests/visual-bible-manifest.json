@@ -1,28 +1,39 @@
 {
   "folders": [
     {
-      "slug": "ps23",
-      "name": "诗篇23篇",
+      "slug": "jos2415",
+      "name": "约书亚记二十四章十五节",
       "count": 1
     },
     {
-      "slug": "jos2415",
-      "name": "约书亚记二十四章十五节",
+      "slug": "ps127-2",
+      "name": "诗篇127篇2节",
+      "count": 1
+    },
+    {
+      "slug": "ps23",
+      "name": "诗篇23篇",
       "count": 1
     }
   ],
   "items": [
     {
-      "id": "vb-诗篇23篇-诗篇23篇-王羲之书法",
-      "title": "诗篇23篇-王羲之书法",
-      "folder": "ps23",
-      "imageUrl": "/visual-bible/诗篇23篇/诗篇23篇-王羲之书法.png"
-    },
-    {
       "id": "vb-约书亚记二十四章十五节-必定侍奉耶和华-以马内利印章",
       "title": "必定侍奉耶和华_以马内利印章",
       "folder": "jos2415",
       "imageUrl": "/visual-bible/约书亚记二十四章十五节/必定侍奉耶和华_以马内利印章.png"
+    },
+    {
+      "id": "vb-诗篇127篇2节-安然睡觉-诗篇127-2",
+      "title": "安然睡觉-诗篇127-2",
+      "folder": "ps127-2",
+      "imageUrl": "/visual-bible/诗篇127篇2节/安然睡觉-诗篇127-2.png"
+    },
+    {
+      "id": "vb-诗篇23篇-诗篇23篇-王羲之书法",
+      "title": "诗篇23篇-王羲之书法",
+      "folder": "ps23",
+      "imageUrl": "/visual-bible/诗篇23篇/诗篇23篇-王羲之书法.png"
     }
   ]
 }
