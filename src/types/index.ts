@@ -10,6 +10,12 @@ export interface VideoItem {
   lyrics?: string;
 }
 
+export interface BookFolder {
+  id: string;
+  name: string;
+  description?: string;
+}
+
 export interface BookItem {
   id: string;
   title: string;
@@ -18,6 +24,7 @@ export interface BookItem {
   coverUrl?: string;
   fileUrl: string;
   format: 'pdf' | 'epub' | 'markdown';
+  folder?: string;
   date?: string;
 }
 

@@ -1,4 +1,4 @@
-import type { Manifest, VideoItem, BookItem, HymnItem, DailyBibleMonth, GospelArticle, GospelFolder, GospelTract, LifeStudyItem, LifeStudyFolder, LifesongItem, LifesongFolder, VisualBibleFolder, VisualBibleItem } from '@/types';
+import type { Manifest, VideoItem, BookItem, BookFolder, HymnItem, DailyBibleMonth, GospelArticle, GospelFolder, GospelTract, LifeStudyItem, LifeStudyFolder, LifesongItem, LifesongFolder, VisualBibleFolder, VisualBibleItem } from '@/types';
 
 const COS_BASE_URL = import.meta.env.VITE_COS_BASE_URL || '';
 const MANIFEST_PATH = '/manifest.json';
@@ -17,6 +17,7 @@ let videoCacheTimestamp = 0;
 const VIDEO_CACHE_TTL = 5 * 60 * 1000;
 
 let cachedBookItems: BookItem[] | null = null;
+let cachedBookFolders: BookFolder[] | null = null;
 let bookCacheTimestamp = 0;
 const BOOK_CACHE_TTL = 5 * 60 * 1000;
 
@@ -122,12 +123,18 @@ export async function getBooks(): Promise<BookItem[]> {
       item.coverUrl = resolveUrl(item.coverUrl, baseUrl);
     });
     cachedBookItems = items;
+    cachedBookFolders = data.folders || [];
     bookCacheTimestamp = now;
     return items;
   } catch (error) {
     console.error('获取书报 manifest 失败:', error);
     return [];
   }
+}
+
+export async function getBookFolders(): Promise<BookFolder[]> {
+  if (!cachedBookFolders) await getBooks();
+  return cachedBookFolders || [];
 }
 
 export async function getHymns(): Promise<HymnItem[]> {

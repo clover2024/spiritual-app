@@ -59,6 +59,15 @@ const FORMAT_MAP = {
   '.md': 'markdown',
 };
 
+// Folder definitions: COS subdirectory prefix → folder metadata
+const FOLDER_DEFS = {
+  'books/ni-tuosheng/': {
+    id: 'ni-tuosheng',
+    name: '倪柝声文集',
+    description: '倪柝声弟兄著作集',
+  },
+};
+
 async function main() {
   console.log('Scanning COS /books/ for book files...');
   const keys = await listObjects('books/');
@@ -81,18 +90,31 @@ async function main() {
       .replace(/^-|-$/g, '')
       .substring(0, 60);
 
+    // Determine folder from COS key prefix
+    let folder = undefined;
+    for (const [prefix, def] of Object.entries(FOLDER_DEFS)) {
+      if (key.startsWith(prefix)) {
+        folder = def.id;
+        break;
+      }
+    }
+
     items.push({
       id,
       title,
       fileUrl: '/' + key,
       format,
+      ...(folder ? { folder } : {}),
     });
   }
 
   // Sort by title
   items.sort((a, b) => a.title.localeCompare(b.title, 'zh'));
 
-  const manifest = { items };
+  // Build folders array from definitions
+  const folders = Object.values(FOLDER_DEFS);
+
+  const manifest = { items, folders };
 
   if (!fs.existsSync(MANIFESTS_DIR)) fs.mkdirSync(MANIFESTS_DIR, { recursive: true });
   fs.writeFileSync(MANIFEST_PATH, JSON.stringify(manifest, null, 2), 'utf-8');

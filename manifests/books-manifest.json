@@ -55,16 +55,156 @@
       "format": "epub"
     },
     {
+      "id": "book-101-第一册-灵修指微",
+      "title": "101 第一册 灵修指微",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/101 第一册 灵修指微.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-102-第二册-十字架的道",
+      "title": "102 第二册 十字架的道",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/102 第二册 十字架的道.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-103-第三册-基督徒报-卷一",
+      "title": "103 第三册 基督徒报（卷一）",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/103 第三册 基督徒报（卷一）.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-104-第四册-基督徒报-卷二",
+      "title": "104 第四册 基督徒报（卷二）",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/104 第四册 基督徒报（卷二）.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-105-第五册-基督徒报-卷三",
+      "title": "105 第五册 基督徒报（卷三）",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/105 第五册 基督徒报（卷三）.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-106-第六册-基督徒报-卷四",
+      "title": "106 第六册 基督徒报（卷四）",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/106 第六册 基督徒报（卷四）.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-107-第七册-基督徒报-卷五",
+      "title": "107 第七册 基督徒报（卷五）",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/107 第七册 基督徒报（卷五）.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-108-第八册-复兴报-卷一",
+      "title": "108 第八册 复兴报（卷一）",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/108 第八册 复兴报（卷一）.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-109-第九册-复兴报-卷二",
+      "title": "109 第九册 复兴报（卷二）",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/109 第九册 复兴报（卷二）.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
       "id": "book-10使徒行传研读下册",
       "title": "10使徒行传研读下册",
       "fileUrl": "/books/10使徒行传研读下册.epub",
       "format": "epub"
     },
     {
+      "id": "book-110-第十册-复兴报-卷三",
+      "title": "110 第十册 复兴报（卷三）",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/110 第十册 复兴报（卷三）.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-111-第十一册-复兴报-卷四",
+      "title": "111 第十一册 复兴报（卷四）",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/111 第十一册 复兴报（卷四）.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-112-第十二册-属灵人-上册",
+      "title": "112 第十二册 属灵人（上册）",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/112 第十二册 属灵人（上册）.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-113-第十三册-属灵人-中册",
+      "title": "113 第十三册 属灵人（中册）",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/113 第十三册 属灵人（中册）.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-114-第十四册-属灵人-下册",
+      "title": "114 第十四册 属灵人（下册）",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/114 第十四册 属灵人（下册）.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-115-第十五册-马太福音查经记录",
+      "title": "115 第十五册 马太福音查经记录",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/115 第十五册 马太福音查经记录.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-116-第十六册-启示录的研究",
+      "title": "116 第十六册 启示录的研究",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/116 第十六册 启示录的研究.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-117-第十七册-讲经记录-卷一",
+      "title": "117 第十七册 讲经记录（卷一）",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/117 第十七册 讲经记录（卷一）.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-118-第十八册-讲经记录-卷二",
+      "title": "118 第十八册 讲经记录（卷二）",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/118 第十八册 讲经记录（卷二）.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-119-第十九册-讲经记录-卷三",
+      "title": "119 第十九册 讲经记录（卷三）",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/119 第十九册 讲经记录（卷三）.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
       "id": "book-11诗篇中的神圣经历",
       "title": "11诗篇中的神圣经历",
       "fileUrl": "/books/11诗篇中的神圣经历.epub",
       "format": "epub"
+    },
+    {
+      "id": "book-120-第二十册-福音问题",
+      "title": "120 第二十册 福音问题",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/120 第二十册 福音问题.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
     },
     {
       "id": "book-12诗篇中的教会生活",
@@ -115,16 +255,198 @@
       "format": "epub"
     },
     {
+      "id": "book-201-第一册-复刊基督徒报",
+      "title": "201 第一册 复刊基督徒报",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/201 第一册 复刊基督徒报.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-202-第二册-聚会中的生活-教会祷告的职事",
+      "title": "202 第二册 聚会中的生活、教会祷告的职事",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/202 第二册 聚会中的生活、教会祷告的职事.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-203-第三册-歌中的歌-诗歌",
+      "title": "203 第三册 歌中的歌、诗歌",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/203 第三册 歌中的歌、诗歌.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-204-第四册-得胜的生命",
+      "title": "204 第四册 得胜的生命",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/204 第四册 得胜的生命.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-205-第五册-通问汇刊-卷一",
+      "title": "205 第五册 通问汇刊（卷一）",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/205 第五册 通问汇刊（卷一）.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-206-第六册-通问汇刊-卷二",
+      "title": "206 第六册 通问汇刊（卷二）",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/206 第六册 通问汇刊（卷二）.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-207-第七册-正常的基督徒信仰",
+      "title": "207 第七册 正常的基督徒信仰",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/207 第七册 正常的基督徒信仰.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-208-第八册-神的福音-卷一",
+      "title": "208 第八册 神的福音（卷一）",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/208 第八册 神的福音（卷一）.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-209-第九册-神的福音-卷二",
+      "title": "209 第九册 神的福音（卷二）",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/209 第九册 神的福音（卷二）.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
       "id": "book-20腓立比书研读下册",
       "title": "20腓立比书研读下册",
       "fileUrl": "/books/20腓立比书研读下册.epub",
       "format": "epub"
     },
     {
+      "id": "book-210-第十册-工作的再思",
+      "title": "210 第十册 工作的再思",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/210 第十册 工作的再思.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-211-第十一册-敞开的门-卷一",
+      "title": "211 第十一册 敞开的门（卷一）",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/211 第十一册 敞开的门（卷一）.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-212-第十二册-敞开的门-卷一",
+      "title": "212 第十二册 敞开的门（卷一）",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/212 第十二册 敞开的门（卷一）.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-213-第十三册-正常的基督徒生活",
+      "title": "213 第十三册 正常的基督徒生活",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/213 第十三册 正常的基督徒生活.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-214-第十四册-荣耀的教会-圣洁没有瑕疵",
+      "title": "214 第十四册 荣耀的教会（圣洁没有瑕疵）",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/214 第十四册 荣耀的教会（圣洁没有瑕疵）.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-215-第十五册-亚伯拉罕以撒雅各的神",
+      "title": "215 第十五册 亚伯拉罕以撒雅各的神",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/215 第十五册 亚伯拉罕以撒雅各的神.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-216-第十六册-中心的信息",
+      "title": "216 第十六册 中心的信息",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/216 第十六册 中心的信息.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-217-第十七册-一般的信息-卷一",
+      "title": "217 第十七册 一般的信息（卷一）",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/217 第十七册 一般的信息（卷一）.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-218-第十八册-一般的信息-卷二",
+      "title": "218 第十八册 一般的信息（卷二）",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/218 第十八册 一般的信息（卷二）.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-219-第十九册-坐行站-不要爱世界",
+      "title": "219 第十九册 坐行站、不要爱世界",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/219 第十九册 坐行站、不要爱世界.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
       "id": "book-21提摩太后书研读上册",
       "title": "21提摩太后书研读上册",
       "fileUrl": "/books/21提摩太后书研读上册.epub",
       "format": "epub"
+    },
+    {
+      "id": "book-220-第二十册-这人将来如何",
+      "title": "220 第二十册 这人将来如何",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/220 第二十册 这人将来如何.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-221-第二十一册-特会-信息-及谈话记录-卷一",
+      "title": "221 第二十一册 特会、信息、及谈话记录（卷一）",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/221 第二十一册 特会、信息、及谈话记录（卷一）.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-222-第二十二册-特会-信息-及谈话记录-卷二",
+      "title": "222 第二十二册 特会、信息、及谈话记录（卷二）",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/222 第二十二册 特会、信息、及谈话记录（卷二）.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-223-第二十三册-特会-信息-及谈话记录-卷三",
+      "title": "223 第二十三册 特会、信息、及谈话记录（卷三）",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/223 第二十三册 特会、信息、及谈话记录（卷三）.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-224-第二十四册-特会-信息-及谈话记录-卷四",
+      "title": "224 第二十四册 特会、信息、及谈话记录（卷四）",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/224 第二十四册 特会、信息、及谈话记录（卷四）.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-225-第二十五册-特会-信息-及谈话记录-卷五",
+      "title": "225 第二十五册 特会、信息、及谈话记录（卷五）",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/225 第二十五册 特会、信息、及谈话记录（卷五）.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-226-第二十六册-特会-信息-及谈话记录-卷六",
+      "title": "226 第二十六册 特会、信息、及谈话记录（卷六）",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/226 第二十六册 特会、信息、及谈话记录（卷六）.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
     },
     {
       "id": "book-22提摩太后书研读下册",
@@ -169,10 +491,122 @@
       "format": "epub"
     },
     {
+      "id": "book-301-第一册-教会的正统-权柄与顺服",
+      "title": "301 第一册 教会的正统、权柄与顺服",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/301 第一册 教会的正统、权柄与顺服.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-302-第二册-初信早就-上册",
+      "title": "302 第二册 初信早就（上册）",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/302 第二册 初信早就（上册）.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-303-第三册-初信早就-中册",
+      "title": "303 第三册 初信早就（中册）",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/303 第三册 初信早就（中册）.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-304-第四册-初信早就-下册",
+      "title": "304 第四册 初信早就（下册）",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/304 第四册 初信早就（下册）.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-305-第五册-教会的事务",
+      "title": "305 第五册 教会的事务",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/305 第五册 教会的事务.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-306-第六册-主工人的性格",
+      "title": "306 第六册 主工人的性格",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/306 第六册 主工人的性格.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-307-第七册-神话语的职事",
+      "title": "307 第七册 神话语的职事",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/307 第七册 神话语的职事.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-308-第八册-读经之路-人的破碎与灵的出来",
+      "title": "308 第八册 读经之路、人的破碎与灵的出来",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/308 第八册 读经之路、人的破碎与灵的出来.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-309-第九册-执事报-复刊敞开的门-卷一",
+      "title": "309 第九册 执事报、复刊敞开的门（卷一）",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/309 第九册 执事报、复刊敞开的门（卷一）.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
       "id": "book-30哥林多前后书的亮点",
       "title": "30哥林多前后书的亮点",
       "fileUrl": "/books/30哥林多前后书的亮点.epub",
       "format": "epub"
+    },
+    {
+      "id": "book-310-第十册-执事报-复刊敞开的门-卷二",
+      "title": "310 第十册 执事报、复刊敞开的门（卷二）",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/310 第十册 执事报、复刊敞开的门（卷二）.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-311-第十一册-倪柝声恢复职事过程中信息记录",
+      "title": "311 第十一册 倪柝声恢复职事过程中信息记录",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/311 第十一册 倪柝声恢复职事过程中信息记录.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-312-第十二册-属灵的判定与判定的实例",
+      "title": "312 第十二册 属灵的判定与判定的实例",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/312 第十二册 属灵的判定与判定的实例.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-313-第十三册-鼓岭训练记录-卷一",
+      "title": "313 第十三册 鼓岭训练记录（卷一）",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/313 第十三册 鼓岭训练记录（卷一）.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-314-第十四册-鼓岭训练记录-卷二",
+      "title": "314 第十四册 鼓岭训练记录（卷二）",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/314 第十四册 鼓岭训练记录（卷二）.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-315-第十五册-主恢复中成熟的带领-卷一",
+      "title": "315 第十五册 主恢复中成熟的带领（卷一）",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/315 第十五册 主恢复中成熟的带领（卷一）.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-316-第十六册-主恢复中成熟的带领-卷二",
+      "title": "316 第十六册 主恢复中成熟的带领（卷二）",
+      "fileUrl": "/books/ni-tuosheng/倪文集分册版/316 第十六册 主恢复中成熟的带领（卷二）.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
     },
     {
       "id": "book-31腓利门书研读",
@@ -301,6 +735,20 @@
       "format": "epub"
     },
     {
+      "id": "book-倪柝声小传",
+      "title": "倪柝声小传",
+      "fileUrl": "/books/ni-tuosheng/倪柝声小传.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
+      "id": "book-倪文集简体精装存档",
+      "title": "倪文集简体精装存档",
+      "fileUrl": "/books/ni-tuosheng/倪文集简体精装存档.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
       "id": "book-破壳飞腾-吴秀良",
       "title": "破壳飞腾-吴秀良",
       "fileUrl": "/books/破壳飞腾-吴秀良.pdf",
@@ -343,6 +791,13 @@
       "format": "epub"
     },
     {
+      "id": "book-十二篮前四辑",
+      "title": "十二篮前四辑",
+      "fileUrl": "/books/ni-tuosheng/十二篮前四辑.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
+    },
+    {
       "id": "book-十二篮全集",
       "title": "十二篮全集",
       "fileUrl": "/books/十二篮全集.epub",
@@ -371,6 +826,13 @@
       "title": "异象和启示",
       "fileUrl": "/books/异象和启示.epub",
       "format": "epub"
+    },
+    {
+      "id": "book-隐藏的吗哪-倪柝声",
+      "title": "隐藏的吗哪-倪柝声",
+      "fileUrl": "/books/ni-tuosheng/隐藏的吗哪-倪柝声.pdf",
+      "format": "pdf",
+      "folder": "ni-tuosheng"
     },
     {
       "id": "book-约翰一书中与主交通的经历",
@@ -407,6 +869,13 @@
       "title": "作工的炸力",
       "fileUrl": "/books/作工的炸力.md",
       "format": "markdown"
+    }
+  ],
+  "folders": [
+    {
+      "id": "ni-tuosheng",
+      "name": "倪柝声文集",
+      "description": "倪柝声弟兄著作集"
     }
   ]
 }

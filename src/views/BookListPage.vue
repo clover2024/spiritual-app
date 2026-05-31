@@ -22,37 +22,94 @@
         <p>加载中...</p>
       </div>
 
-      <div v-else-if="filteredBooks.length > 0" class="book-grid">
-        <div
-          v-for="book in filteredBooks"
-          :key="book.id"
-          class="book-card"
-          @click="goToBook(book.id)"
-        >
-          <div class="book-cover">
-            <ion-img
-              v-if="book.coverUrl"
-              :src="book.coverUrl"
-              :alt="book.title"
-            ></ion-img>
-            <div v-else class="cover-placeholder">
-              <ion-icon :icon="bookOutline"></ion-icon>
-              <ion-badge :color="book.format === 'pdf' ? 'danger' : 'primary'">
-                {{ book.format?.toUpperCase() }}
-              </ion-badge>
+      <template v-else>
+        <!-- Featured section: 倪柝声专区 -->
+        <div v-if="showFeatured && niFolder && niBooks.length > 0" class="featured-section ion-padding">
+          <div class="featured-banner" @click="openFolder(niFolder.id)">
+            <div class="featured-info">
+              <div class="featured-icon">
+                <ion-icon :icon="libraryOutline" />
+              </div>
+              <div class="featured-text">
+                <span class="featured-title">{{ niFolder.name }}</span>
+                <span class="featured-desc">{{ niFolder.description }} · {{ niBooks.length }}本</span>
+              </div>
             </div>
-          </div>
-          <div class="book-info">
-            <h3>{{ book.title }}</h3>
-            <p v-if="book.author">{{ book.author }}</p>
+            <ion-icon :icon="chevronForwardOutline" class="featured-arrow" />
           </div>
         </div>
-      </div>
 
-      <div v-if="!loading && filteredBooks.length === 0" class="empty-state">
-        <ion-icon :icon="bookOutline" class="empty-icon"></ion-icon>
-        <p>{{ searchQuery ? '未找到匹配的书报' : '暂无书报内容' }}</p>
-      </div>
+        <!-- Folder detail view -->
+        <template v-if="activeFolder">
+          <div class="folder-header ion-padding">
+            <ion-button fill="clear" size="small" @click="activeFolder = ''">
+              <ion-icon :icon="arrowBackOutline" slot="icon-only"></ion-icon>
+              <span>全部书报</span>
+            </ion-button>
+          </div>
+          <div class="book-grid ion-padding">
+            <div
+              v-for="book in filteredBooks"
+              :key="book.id"
+              class="book-card"
+              @click="goToBook(book.id)"
+            >
+              <div class="book-cover">
+                <ion-img
+                  v-if="book.coverUrl"
+                  :src="book.coverUrl"
+                  :alt="book.title"
+                ></ion-img>
+                <div v-else class="cover-placeholder">
+                  <ion-icon :icon="bookOutline"></ion-icon>
+                  <ion-badge :color="book.format === 'pdf' ? 'danger' : 'primary'">
+                    {{ book.format?.toUpperCase() }}
+                  </ion-badge>
+                </div>
+              </div>
+              <div class="book-info">
+                <h3>{{ book.title }}</h3>
+                <p v-if="book.author">{{ book.author }}</p>
+              </div>
+            </div>
+          </div>
+        </template>
+
+        <!-- Normal grid view -->
+        <template v-else>
+          <div v-if="filteredBooks.length > 0" class="book-grid">
+            <div
+              v-for="book in filteredBooks"
+              :key="book.id"
+              class="book-card"
+              @click="goToBook(book.id)"
+            >
+              <div class="book-cover">
+                <ion-img
+                  v-if="book.coverUrl"
+                  :src="book.coverUrl"
+                  :alt="book.title"
+                ></ion-img>
+                <div v-else class="cover-placeholder">
+                  <ion-icon :icon="bookOutline"></ion-icon>
+                  <ion-badge :color="book.format === 'pdf' ? 'danger' : 'primary'">
+                    {{ book.format?.toUpperCase() }}
+                  </ion-badge>
+                </div>
+              </div>
+              <div class="book-info">
+                <h3>{{ book.title }}</h3>
+                <p v-if="book.author">{{ book.author }}</p>
+              </div>
+            </div>
+          </div>
+        </template>
+
+        <div v-if="!loading && filteredBooks.length === 0" class="empty-state">
+          <ion-icon :icon="bookOutline" class="empty-icon"></ion-icon>
+          <p>{{ searchQuery ? '未找到匹配的书报' : '暂无书报内容' }}</p>
+        </div>
+      </template>
     </ion-content>
   </ion-page>
 </template>
@@ -71,23 +128,34 @@ import {
   IonBadge,
   IonSearchbar,
   IonSpinner,
+  IonButton,
   IonRefresher,
   IonRefresherContent,
   RefresherCustomEvent,
 } from '@ionic/vue';
-import { bookOutline } from 'ionicons/icons';
-import { getBooks } from '@/services/cos';
-import type { BookItem } from '@/types';
+import { bookOutline, libraryOutline, chevronForwardOutline, arrowBackOutline } from 'ionicons/icons';
+import { getBooks, getBookFolders } from '@/services/cos';
+import type { BookItem, BookFolder } from '@/types';
 
 const router = useRouter();
 const loading = ref(true);
 const searchQuery = ref('');
 const books = ref<BookItem[]>([]);
+const folders = ref<BookFolder[]>([]);
+const activeFolder = ref('');
+
+const niFolder = computed(() => folders.value.find(f => f.id === 'ni-tuosheng'));
+const niBooks = computed(() => books.value.filter(b => b.folder === 'ni-tuosheng'));
+const showFeatured = computed(() => !searchQuery.value && !activeFolder.value);
 
 const filteredBooks = computed(() => {
-  if (!searchQuery.value) return books.value;
+  let list = books.value;
+  if (activeFolder.value) {
+    list = list.filter(b => b.folder === activeFolder.value);
+  }
+  if (!searchQuery.value) return list;
   const q = searchQuery.value.toLowerCase();
-  return books.value.filter(
+  return list.filter(
     (b) =>
       b.title.toLowerCase().includes(q) ||
       b.author?.toLowerCase().includes(q) ||
@@ -97,7 +165,9 @@ const filteredBooks = computed(() => {
 
 async function loadData() {
   try {
-    books.value = await getBooks();
+    const [items, folderList] = await Promise.all([getBooks(), getBookFolders()]);
+    books.value = items;
+    folders.value = folderList;
   } catch (e) {
     console.error('加载书报失败:', e);
   } finally {
@@ -106,8 +176,9 @@ async function loadData() {
 }
 
 function handleRefresh(event: RefresherCustomEvent) {
-  getBooks().then((b) => {
-    books.value = b;
+  Promise.all([getBooks(), getBookFolders()]).then(([items, folderList]) => {
+    books.value = items;
+    folders.value = folderList;
     event.target.complete();
   }).catch(() => {
     event.target.complete();
@@ -116,6 +187,10 @@ function handleRefresh(event: RefresherCustomEvent) {
 
 function goToBook(id: string) {
   router.push(`/book/${id}`);
+}
+
+function openFolder(folderId: string) {
+  activeFolder.value = folderId;
 }
 
 onMounted(loadData);
@@ -132,6 +207,71 @@ onMounted(loadData);
   color: var(--ion-color-medium);
 }
 
+/* Featured banner */
+.featured-section {
+  padding-bottom: 0;
+}
+
+.featured-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #fff;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.featured-banner:active {
+  transform: scale(0.98);
+}
+
+.featured-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.featured-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.featured-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.featured-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.featured-desc {
+  font-size: 0.8rem;
+  opacity: 0.85;
+}
+
+.featured-arrow {
+  font-size: 1.3rem;
+  opacity: 0.7;
+}
+
+/* Folder header */
+.folder-header {
+  padding-bottom: 0;
+}
+
+/* Book grid */
 .book-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
