@@ -13,14 +13,9 @@
           <ion-label>音频</ion-label>
         </ion-tab-button>
 
-        <ion-tab-button tab="visual-bible" href="/tabs/visual-bible">
-          <ion-icon aria-hidden="true" :icon="imagesOutline" />
-          <ion-label>视觉圣经</ion-label>
-        </ion-tab-button>
-
         <ion-tab-button tab="gospel" href="/tabs/gospel">
-          <ion-icon aria-hidden="true" :icon="documentTextOutline" />
-          <ion-label>文字室</ion-label>
+          <ion-icon aria-hidden="true" :icon="appsOutline" />
+          <ion-label>福音</ion-label>
         </ion-tab-button>
 
         <ion-tab-button tab="books" href="/tabs/books">
@@ -47,5 +42,5 @@ import {
   IonPage,
   IonRouterOutlet,
 } from '@ionic/vue';
-import { playCircleOutline, bookOutline, musicalNotesOutline, imagesOutline, documentTextOutline, heartOutline } from 'ionicons/icons';
+import { playCircleOutline, bookOutline, musicalNotesOutline, appsOutline, heartOutline } from 'ionicons/icons';
 </script>
