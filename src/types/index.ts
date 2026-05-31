@@ -102,6 +102,12 @@ export interface LifesongItem {
   date?: string;
 }
 
+export interface GospelTract {
+  id: string;
+  title: string;
+  images: string[];
+}
+
 export interface VisualBibleFolder {
   slug: string;
   name: string;

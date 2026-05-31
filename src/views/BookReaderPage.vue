@@ -112,6 +112,9 @@
             <ion-button size="small" @click="epubNext">
               <ion-icon :icon="arrowForwardOutline" slot="icon-only"></ion-icon>
             </ion-button>
+            <ion-button size="small" @click="downloadEpub" class="download-btn">
+              <ion-icon :icon="downloadOutline" slot="icon-only"></ion-icon>
+            </ion-button>
           </div>
           <div ref="epubContainer" class="epub-viewer"></div>
         </div>
@@ -419,6 +422,17 @@ function epubPrev() {
 
 function epubNext() {
   epubRendition?.next();
+}
+
+function downloadEpub() {
+  if (!book.value?.fileUrl) return;
+  const link = document.createElement('a');
+  link.href = book.value.fileUrl;
+  link.download = (book.value.title || 'book') + '.epub';
+  link.target = '_blank';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 }
 </script>
 

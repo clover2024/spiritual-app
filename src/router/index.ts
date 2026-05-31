@@ -36,6 +36,10 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('@/views/GospelStationPage.vue'),
       },
       {
+        path: 'gospel-tracts',
+        component: () => import('@/views/GospelTractsPage.vue'),
+      },
+      {
         path: 'daily-bible',
         component: () => import('@/views/DailyBiblePage.vue'),
       },

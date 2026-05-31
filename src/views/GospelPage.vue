@@ -26,6 +26,16 @@
             <span class="module-desc">福音文章阅读</span>
           </div>
         </div>
+
+        <div class="module-card" @click="router.push('/tabs/gospel-tracts')">
+          <div class="module-icon gospel-tracts-icon">
+            <ion-icon :icon="newspaperOutline" />
+          </div>
+          <div class="module-info">
+            <span class="module-name">福音单张</span>
+            <span class="module-desc">福音小册子</span>
+          </div>
+        </div>
       </div>
     </ion-content>
   </ion-page>
@@ -41,7 +51,7 @@ import {
   IonContent,
   IonIcon,
 } from '@ionic/vue';
-import { imagesOutline, documentTextOutline } from 'ionicons/icons';
+import { imagesOutline, documentTextOutline, newspaperOutline } from 'ionicons/icons';
 
 const router = useRouter();
 </script>
@@ -90,6 +100,11 @@ const router = useRouter();
 .gospel-station-icon {
   color: #fff;
   background: linear-gradient(135deg, #f093fb, #f5576c);
+}
+
+.gospel-tracts-icon {
+  color: #fff;
+  background: linear-gradient(135deg, #43e97b, #38f9d7);
 }
 
 .module-info {

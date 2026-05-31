@@ -1,4 +1,4 @@
-import type { Manifest, VideoItem, BookItem, HymnItem, DailyBibleMonth, GospelArticle, GospelFolder, LifeStudyItem, LifeStudyFolder, LifesongItem, LifesongFolder, VisualBibleFolder, VisualBibleItem } from '@/types';
+import type { Manifest, VideoItem, BookItem, HymnItem, DailyBibleMonth, GospelArticle, GospelFolder, GospelTract, LifeStudyItem, LifeStudyFolder, LifesongItem, LifesongFolder, VisualBibleFolder, VisualBibleItem } from '@/types';
 
 const COS_BASE_URL = import.meta.env.VITE_COS_BASE_URL || '';
 const MANIFEST_PATH = '/manifest.json';
@@ -241,6 +241,36 @@ export async function getLifesongs(): Promise<LifesongItem[]> {
 export async function getLifesongFolders(): Promise<LifesongFolder[]> {
   if (!cachedLifesongFolders) await getLifesongs();
   return cachedLifesongFolders || [];
+}
+
+let cachedGospelTracts: GospelTract[] | null = null;
+let gospelTractsCacheTimestamp = 0;
+const GOSPEL_TRACTS_CACHE_TTL = 5 * 60 * 1000;
+
+export async function getGospelTracts(): Promise<GospelTract[]> {
+  const now = Date.now();
+  if (cachedGospelTracts && (now - gospelTractsCacheTimestamp) < GOSPEL_TRACTS_CACHE_TTL) {
+    return cachedGospelTracts;
+  }
+
+  const baseUrl = getBaseUrl();
+  if (!baseUrl) return [];
+
+  try {
+    const response = await fetch(`${baseUrl}/gospel-tracts/gospel-tracts-manifest.json?t=${now}`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    const items: GospelTract[] = data.items || [];
+    items.forEach(item => {
+      item.images = item.images.map((img: string) => resolveUrl(img, baseUrl) || '');
+    });
+    cachedGospelTracts = items;
+    gospelTractsCacheTimestamp = now;
+    return items;
+  } catch (error) {
+    console.error('获取福音单张 manifest 失败:', error);
+    return [];
+  }
 }
 
 let cachedVisualBibleItems: VisualBibleItem[] | null = null;
